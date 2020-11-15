@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: lumberghini
+
+server:
+  port: 8081
+
+camunda:
+  bpm:
+    admin-user:
+      id: admin
+    filter:
+      create: All
+
+lumberghini:
+  quotes:
+    list:
+      - "Ummh, actually ..."
+

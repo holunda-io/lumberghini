@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d [%thread] %level %logger - %m%n</Pattern>
+    </layout>
+  </appender>
+  <root level="info">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+  <logger name="org.springframework.core.env" level="warn">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="ch.qos.logback" level="warn">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="org.camunda.bpm.engine.persistence" level="warn">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+</configuration>
