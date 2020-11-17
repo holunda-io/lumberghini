@@ -8,6 +8,7 @@ import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.springframework.stereotype.Component
+import java.lang.IllegalStateException
 import java.util.*
 
 @Component
@@ -16,7 +17,7 @@ class PerpetuumMobileProcess(
   private val repositoryService: RepositoryService
 ) {
   companion object {
-    private fun processDefinitionKey(user:String) = "worst-day-for-$user"
+    private fun processDefinitionKey(user: String) = "worst-day-for-$user"
 
     object VARIABLES {
       val USER_NAME = CamundaBpmData.stringVariable("userName")
@@ -25,21 +26,20 @@ class PerpetuumMobileProcess(
 
   val deployments = mutableListOf<Deployment>()
 
-
-  private fun findOrDeploy(user:String): ProcessDefinition {
+  private fun findOrDeploy(user: String): ProcessDefinition {
     val process: ProcessDefinition? = repositoryService.createProcessDefinitionQuery()
       .active()
       .processDefinitionKey(processDefinitionKey(user))
       .singleResult()
 
-    if (process == null)  {
+    if (process == null) {
       deployments.add(deploy(user))
       return findOrDeploy(user)
     }
     return process!!
   }
 
-  fun start(user:String) : PerpetuumMobileProcessInstance{
+  fun start(user: String): PerpetuumMobileProcessInstance {
     val process = findOrDeploy(user)
     val businessKey = UUID.randomUUID().toString()
 
@@ -48,7 +48,13 @@ class PerpetuumMobileProcess(
       .build()).let { wrap(it) }
   }
 
-  fun deploy(user:String): Deployment {
+  fun loadForName(userName: String): PerpetuumMobileProcessInstance = runtimeService.createProcessInstanceQuery()
+    .variableValueEquals(VARIABLES.USER_NAME.name, userName)
+    .singleResult()
+    ?.let { wrap(it) }
+    ?: throw IllegalStateException("no process found for userName=$userName")
+
+  fun deploy(user: String): Deployment {
     val key = processDefinitionKey(user)
     val bpmn = Bpmn.createExecutableProcess(key)
       .startEvent()
@@ -59,5 +65,9 @@ class PerpetuumMobileProcess(
     return repositoryService.createDeployment().addModelInstance("$key.bpmn", bpmn).deploy()
   }
 
-  fun wrap(processInstance: ProcessInstance) = PerpetuumMobileProcessInstance(processInstance)
+  fun wrap(processInstance: ProcessInstance) = PerpetuumMobileProcessInstance(
+    runtimeService,
+    repositoryService,
+    processInstance
+  )
 }
