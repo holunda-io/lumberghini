@@ -29,6 +29,7 @@ class WorstDayProcessTest {
 
     assertThat(process.tasks).hasSize(1)
     assertThat(process.tasks.first().index).isEqualTo(0)
+    assertThat(process.tasks.first().taskDefinitionKey).isEqualTo("task1-000")
     assertThat(process.version).isEqualTo(1)
     assertThat(process.dayFormat).isEqualTo("20201116")
     assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter-20201116")
