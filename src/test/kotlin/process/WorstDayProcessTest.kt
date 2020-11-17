@@ -50,7 +50,7 @@ class WorstDayProcessTest {
   @Test
   fun `task index`() {
     assertThat(task1.index).isEqualTo(0)
-    assertThat(task1.taskDefinitionKey).isEqualTo("task-0")
+    assertThat(task1.taskDefinitionKey).isEqualTo("task-000")
     assertThat(task1.name).isEqualTo("Task 1")
     assertThat(task1.description).isEqualTo("the task one")
   }
