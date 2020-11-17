@@ -21,12 +21,20 @@ class WorstDayProcessTest {
 
   @Test
   fun `create with single task`() {
-    val process = WorstDayProcess(day = day, userName = userName, tasks = listOf(task1))
+    val process = WorstDayProcess(
+      day = day,
+      userName = userName,
+      task = task1.withIndex(100)
+    )
 
     assertThat(process.tasks).hasSize(1)
+    assertThat(process.tasks.first().index).isEqualTo(0)
     assertThat(process.version).isEqualTo(1)
     assertThat(process.dayFormat).isEqualTo("20201116")
     assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter-20201116")
+    assertThat(process.processResourceName).isEqualTo("processWorstDay-peter-20201116.bpmn")
+    assertThat(process.processName).isEqualTo("Worst Day in the life of peter (2020-11-16)")
+
   }
 
   @Test

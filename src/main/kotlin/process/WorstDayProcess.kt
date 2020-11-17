@@ -45,6 +45,12 @@ data class WorstDayProcess(
   companion object : KLogging() {
     private val datePattern = DateTimeFormatter.ofPattern("yyyyMMdd");
 
+    operator fun invoke(day: LocalDate = LocalDate.now(), userName: String, task:WorstDayTask) = WorstDayProcess(
+      day = day,
+      userName = userName,
+      tasks = listOf(task.withIndex(0))
+    )
+
     // secondary constructor: read from BpmnModelInstance.
     operator fun invoke(bpmn: BpmnModelInstance): WorstDayProcess {
       val processDefinitionKey = bpmn.processDefinitionKey()
@@ -67,7 +73,8 @@ data class WorstDayProcess(
   val dayFormat = day.toString().replace("-", "")
   val version = tasks.size
   val processDefinitionKey = "processWorstDay-$userName-$dayFormat"
-  val processName = "Worst Day in the life of $userName"
+  val processResourceName = "$processDefinitionKey.bpmn"
+  val processName = "Worst Day in the life of $userName ($day)"
 
   val bpmnModelInstance: BpmnModelInstance by lazy {
     val builder = Bpmn.createExecutableProcess(processDefinitionKey)
@@ -89,6 +96,11 @@ data class WorstDayProcess(
     Bpmn.convertToString(bpmnModelInstance)
   }
 
+  /**
+   * Creates a copy of this instances with the newTask added.
+   * Index of the newTask is set to the position in the list,
+   * the process version is equal to the list size.
+   */
   fun addTask(newTask: WorstDayTask): WorstDayProcess = copy(
     tasks = (tasks + newTask)
       .mapIndexed { index, task -> task.withIndex(index) }
