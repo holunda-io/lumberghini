@@ -8,14 +8,17 @@ import org.camunda.bpm.model.bpmn.instance.Task
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-private val BpmnModelInstance.processDefinitionKey: String get() = this.getModelElementsByType(Process::class.java).first().id
-private val BpmnModelInstance.tasks: List<WorstDayProcess.WorstDayTask>
-  get() = this.getModelElementsByType(Task::class.java).map { it.toWorstDayTask() }.sortedBy { it.index }.toList()
+private fun BpmnModelInstance.processDefinitionKey() = this.getModelElementsByType(Process::class.java).first().id
+private fun BpmnModelInstance.tasks(): List<WorstDayProcess.WorstDayTask> = this.getModelElementsByType(Task::class.java)
+  .mapIndexed { index, task -> task.toWorstDayTask(index) }
+  .sortedBy { it.index }
+  .toList()
 
-private fun Task.toWorstDayTask() = WorstDayProcess.WorstDayTask(
-  taskDefinitionKey = this.id,
+private fun Task.toWorstDayTask(index: Int = -1) = WorstDayProcess.WorstDayTask(
+  id = this.id.substringBeforeLast("-"),
   name = this.name,
-  description = this.documentations.first().rawTextContent
+  description = this.documentations.first().rawTextContent,
+  index = index
 )
 
 /**
@@ -44,16 +47,10 @@ data class WorstDayProcess(
 
     // secondary constructor: read from BpmnModelInstance.
     operator fun invoke(bpmn: BpmnModelInstance): WorstDayProcess {
-      val processDefinitionKey = bpmn.processDefinitionKey
+      val processDefinitionKey = bpmn.processDefinitionKey()
       val (_, name, date) = processDefinitionKey.split("-")
 
-      val tasks = bpmn.getModelElementsByType(Task::class.java).sortedBy { it.id }.map {
-        WorstDayTask(
-          taskDefinitionKey = it.id,
-          name = it.name,
-          description = it.documentations.first().rawTextContent
-        )
-      }.toList()
+      val tasks = bpmn.tasks()
 
       return WorstDayProcess(
         day = LocalDate.parse(date, datePattern),
@@ -88,10 +85,15 @@ data class WorstDayProcess(
     builder.endEvent().done()
   }
 
-  val bpmnXml by lazy {
+  val bpmnXml : String by lazy {
     Bpmn.convertToString(bpmnModelInstance)
   }
 
+  fun addTask(newTask: WorstDayTask): WorstDayProcess = copy(
+    tasks = (tasks + newTask)
+      .mapIndexed { index, task -> task.withIndex(index) }
+      .toList()
+  )
 
   /**
    * A user task in the process, defined by id, name and description.
@@ -100,7 +102,7 @@ data class WorstDayProcess(
     val id: String,
     val name: String,
     val description: String,
-    val index: Int = -1
+    val index: Int = 0
   ) {
     companion object {
       operator fun invoke(taskDefinitionKey: String, name: String, description: String) = WorstDayTask(
@@ -109,6 +111,11 @@ data class WorstDayProcess(
         description = description,
         index = taskDefinitionKey.substringAfterLast("-").toInt()
       )
+    }
+
+    init {
+      require(index >= 0) { "a tasks index must be >=0" }
+      require(index < 1000) { "a tasks index must be < 1000" }
     }
 
     fun withIndex(index: Int) = copy(index = index)
