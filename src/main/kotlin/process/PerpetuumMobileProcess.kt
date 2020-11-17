@@ -12,6 +12,7 @@ import java.lang.IllegalStateException
 import java.util.*
 
 @Component
+@Deprecated("remove this, moved to WorstDayProcess")
 class PerpetuumMobileProcess(
   private val runtimeService: RuntimeService,
   private val repositoryService: RepositoryService
