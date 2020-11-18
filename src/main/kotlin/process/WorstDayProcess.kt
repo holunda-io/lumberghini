@@ -3,18 +3,22 @@ package io.holunda.funstuff.lumberghini.process
 import mu.KLogging
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
+import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.Process
 import org.camunda.bpm.model.bpmn.instance.Task
+import org.camunda.bpm.model.bpmn.instance.UserTask
+import process.WorstDayTask
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+
 private fun BpmnModelInstance.processDefinitionKey() = this.getModelElementsByType(Process::class.java).first().id
-private fun BpmnModelInstance.tasks(): List<WorstDayProcess.WorstDayTask> = this.getModelElementsByType(Task::class.java)
+private fun BpmnModelInstance.tasks(): List<WorstDayTask> = this.getModelElementsByType(Task::class.java)
   .mapIndexed { index, task -> task.toWorstDayTask(index) }
   .sortedBy { it.index }
   .toList()
 
-private fun Task.toWorstDayTask(index: Int = -1) = WorstDayProcess.WorstDayTask(
+private fun Task.toWorstDayTask(index: Int = -1) = WorstDayTask(
   id = this.id.substringBeforeLast("-"),
   name = this.name,
   description = this.documentations.first().rawTextContent,
@@ -40,59 +44,111 @@ data class WorstDayProcess(
   /**
    * What are the tasks you have to fulfill?
    */
-  val tasks: List<WorstDayTask>
+  val tasks: List<WorstDayTask>,
+
+  /**
+   * The processDefinitionId this process gets, once it was deployed.
+   */
+  val processDefinitionId: String? = null
 ) {
   companion object : KLogging() {
-    private val datePattern = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-    operator fun invoke(day: LocalDate = LocalDate.now(), userName: String, task:WorstDayTask) = WorstDayProcess(
-      day = day,
-      userName = userName,
-      tasks = listOf(task.withIndex(0))
-    )
+    /**
+     * A simple "2020116" date formatter.
+     */
+    private val datePattern = DateTimeFormatter.ofPattern("yyyyMMdd")
 
-    // secondary constructor: read from BpmnModelInstance.
-    operator fun invoke(bpmn: BpmnModelInstance): WorstDayProcess {
-      val processDefinitionKey = bpmn.processDefinitionKey()
-      val (_, name, date) = processDefinitionKey.split("-")
+    /**
+     * Parse a given [BpmnModelInstance] and create a [WorstDayProcess] from it.
+     * If the process already is deployed, its processDefinitionId is taken into account.
+     */
+    fun readFromModelInstance(bpmn: BpmnModelInstance, definitionId: String? = null): WorstDayProcess {
+      // parse userName and day from processDefinitionKey
+      val (_, userName, day) = bpmn.processDefinitionKey().split("-")
 
       val tasks = bpmn.tasks()
 
       return WorstDayProcess(
-        day = LocalDate.parse(date, datePattern),
-        userName = name,
-        tasks = tasks
+        day = LocalDate.parse(day, datePattern),
+        userName = userName,
+        tasks = tasks,
+        processDefinitionId = definitionId
       )
     }
+
+    /**
+     * Helper function to determine the processDefinitionKey based on  current user and current day.
+     */
+    fun processDefinitionKey(userName: String, day: LocalDate) = "processWorstDay-$userName-${day.format(datePattern)}"
   }
+
+  /**
+   * Creates a new process instance containing only one UserTask.
+   */
+  constructor(day: LocalDate, userName: String, task: WorstDayTask) : this(
+    day = day,
+    userName = userName,
+    tasks = listOf(task.withIndex(0))
+  )
 
   init {
     require(tasks.isNotEmpty()) { "the process needs at least one user task!" }
   }
 
-  val dayFormat = day.toString().replace("-", "")
+  /**
+   * This process version, based on numer of UserTasks already added.
+   */
   val version = tasks.size
-  val processDefinitionKey = "processWorstDay-$userName-$dayFormat"
+
+  /**
+   * This process' definition key, based on userName and day.
+   */
+  val processDefinitionKey = processDefinitionKey(userName, day)
+
+  /**
+   * This process' resource name (`processDefinitionKey.bpmn`)
+   */
   val processResourceName = "$processDefinitionKey.bpmn"
+
+  /**
+   * This process' display name.
+   */
   val processName = "Worst Day in the life of $userName ($day)"
 
+  /**
+   * Create the [BpmnModelInstance] based on the tasks of this process.
+   */
   val bpmnModelInstance: BpmnModelInstance by lazy {
-    val builder = Bpmn.createExecutableProcess(processDefinitionKey)
+    require(tasks.isNotEmpty())
+
+    // this first creates a [BpmnModelInstance] containing only the startEvent, then loops through all the tasks, and finally adds the endEvent.
+    Bpmn.createExecutableProcess(processDefinitionKey)
       .name(processName)
+      .camundaStartableInTasklist(false)
       .camundaVersionTag("${version}")
-      .startEvent()
+      .startEvent("startEvent")
+      .done().apply {
+        var lastElementId = "startEvent"
+        tasks.forEach { task ->
+          getModelElementById<FlowNode>(lastElementId).builder()
+            .userTask(task.taskDefinitionKey)
+            .name(task.name)
+            .documentation(task.description)
 
-    tasks.forEachIndexed { index, task ->
-      builder
-        .userTask(task.taskDefinitionKey)
-        .name(task.name)
-        .documentation(task.description)
-    }
+          // update the lastUserTask id for the next iteration
+          lastElementId = task.taskDefinitionKey
+        }
 
-    builder.endEvent().done()
+        getModelElementById<UserTask>(lastElementId).builder()
+          .endEvent("endEvent").name("Beer O'clock")
+          .done()
+      }
   }
 
-  val bpmnXml : String by lazy {
+  /**
+   * Takes the [bpmnModelInstance] and converts it to bpmn-xml.
+   */
+  val bpmnXml: String by lazy {
     Bpmn.convertToString(bpmnModelInstance)
   }
 
@@ -106,34 +162,4 @@ data class WorstDayProcess(
       .mapIndexed { index, task -> task.withIndex(index) }
       .toList()
   )
-
-  /**
-   * A user task in the process, defined by id, name and description.
-   */
-  data class WorstDayTask(
-    val id: String,
-    val name: String,
-    val description: String,
-    val index: Int = 0
-  ) {
-    companion object {
-      operator fun invoke(taskDefinitionKey: String, name: String, description: String) = WorstDayTask(
-        id = taskDefinitionKey.substringBeforeLast("-"),
-        name = name,
-        description = description,
-        index = taskDefinitionKey.substringAfterLast("-").toInt()
-      )
-    }
-
-    init {
-      require(index >= 0) { "a tasks index must be >=0" }
-      require(index < 1000) { "a tasks index must be < 1000" }
-    }
-
-    fun withIndex(index: Int) = copy(index = index)
-
-    private val indexFormat = "$index".padStart(3, '0')
-
-    val taskDefinitionKey = "$id-$indexFormat"
-  }
 }

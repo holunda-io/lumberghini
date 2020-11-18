@@ -4,6 +4,7 @@ import org.camunda.bpm.engine.ProcessEngineConfiguration
 import org.camunda.bpm.engine.impl.ProcessEngineImpl
 import org.camunda.bpm.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration
 import org.camunda.bpm.engine.impl.history.HistoryLevel
+import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.test.ProcessEngineRule
 import org.camunda.bpm.engine.test.mock.MockExpressionManager
 
@@ -24,4 +25,7 @@ class TestProcessEngineConfiguration {
   fun build() = processEngineConfiguration.buildProcessEngine() as ProcessEngineImpl
 
   fun rule() = ProcessEngineRule(build())
+
 }
+
+fun ProcessEngineRule.manageDeployments(deployments:List<Deployment>)  = deployments.forEach { this.manageDeployment(it) }
