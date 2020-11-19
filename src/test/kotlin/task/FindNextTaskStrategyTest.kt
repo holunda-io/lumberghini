@@ -1,5 +1,6 @@
-package io.holunda.funstuff.lumberghini.process
+package io.holunda.funstuff.lumberghini.task
 
+import io.holunda.funstuff.lumberghini.process.WorstDayProcess
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

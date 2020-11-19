@@ -1,66 +1,83 @@
 package io.holunda.funstuff.lumberghini.process
 
-import org.camunda.bpm.engine.RepositoryService
+import io.holunda.funstuff.lumberghini.UserName
+import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
 import org.camunda.bpm.engine.RuntimeService
+import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.delegate.ExecutionListener
 import org.camunda.bpm.engine.repository.Deployment
-import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
 class WorstDayProcessService(
-  private val repositoryService: RepositoryService,
   private val runtimeService: RuntimeService,
   private val findNextTaskStrategy: FindNextTaskStrategy,
   private val todaySupplier: () -> LocalDate = { LocalDate.now() },
-  private val deployments: MutableList<Deployment> = mutableListOf()
+  private val repository: WorstDayProcessRepository
 ) {
+
+  fun deployNextVersionListener() = ExecutionListener {
+    val nextProcess = findNextTaskStrategy.nextVersion(repository.loadByProcessDefinitionId(it.processDefinitionId))
+    val deploymentId = repository.deploy(nextProcess).id
+    it.setVariable("nextVersionDeploymentId", deploymentId)
+  }
+
+  fun migrateNextVersionListener(): ExecutionListener = ExecutionListener {
+    val currentProcess = repository.loadByProcessDefinitionId(it.processDefinitionId)
+    val nextProcess = repository.loadByDeploymentId(it.getVariable("nextVersionDeploymentId") as String)
+
+    val migrationPlan = runtimeService.createMigrationPlan(currentProcess.processDefinitionId, nextProcess.processDefinitionId)
+      .mapEqualActivities()
+      //.mapActivities("endEvent", nextProcess.tasks.last().taskDefinitionKey)
+      .build()
+
+    runtimeService.newMigration(runtimeService.createMigrationPlan(
+      currentProcess.processDefinitionId,
+      nextProcess.processDefinitionId
+    ).mapEqualActivities()
+      .build())
+      .processInstanceIds(it.processInstanceId)
+      .execute()
+  }
+
 
   fun start(userName: String): WorstDayProcessInstance {
     val process = findDeployedProcess(userName) ?: deploy(create(userName))
-
-    val processInstance =  runtimeService.findSingleInstance(process) ?: runtimeService.startProcessInstanceById(process.processDefinitionId)
+    val processInstance = runtimeService.findSingleInstance(process) ?: runtimeService.startProcessInstanceByKey(process.processDefinitionKey)
     return wrap(processInstance)
   }
 
-  fun create(userName: String) = WorstDayProcess(
+  fun create(userName: UserName) = WorstDayProcess(
     day = todaySupplier(),
     userName = userName,
     task = findNextTaskStrategy.next()
   )
 
-  fun loadProcess(userName: String) = findDeployedProcess(userName)
+  fun createAndDeploy(userName: UserName) = repository.deploy(
+    create(userName)
+  )
+
+  fun loadProcess(userName: UserName) = findDeployedProcess(userName)
     ?: throw IllegalArgumentException("no process deployed for user=$userName, day=${todaySupplier()}")
 
-  fun findDeployedProcess(userName: String): WorstDayProcess? {
-    val definitionId: String = repositoryService
-      .createProcessDefinitionQuery()
-      .latestVersion()
-      .processDefinitionKey(WorstDayProcess.processDefinitionKey(userName, day = todaySupplier()))
-      .singleResult()
-      ?.id
-      ?: return null
-
-    return repositoryService.loadWorstDayProcess(definitionId)
-  }
+  fun findDeployedProcess(userName: UserName): WorstDayProcess? = repository.findByUserName(userName)
 
   fun deploy(process: WorstDayProcess): WorstDayProcess {
-    val deployment: Deployment = repositoryService.createDeployment()
-      .addModelInstance(process.processResourceName, process.bpmnModelInstance)
-      .deploy()
-    deployments.add(deployment)
+    val deployment: Deployment = repository.deploy(process)
 
-    return repositoryService.loadWorstDayProcessByDeployment(deploymentId = deployment.id)
+    return repository.loadByDeploymentId(deployment.id)
   }
 
   fun deployNextVersion(process: WorstDayProcess) = deploy(findNextTaskStrategy.nextVersion(process))
 
-  fun getDeployments() = deployments.toList()
 
-  fun wrap(processInstance:ProcessInstance) = WorstDayProcessInstance(processInstance, runtimeService, repositoryService)
+  fun wrap(processInstance: ProcessInstance) = WorstDayProcessInstance(processInstance, runtimeService, repository)
+
+  private fun DelegateExecution.toWorstDayProcessInstance() = WorstDayProcessInstance(this, repository)
 }
 
-internal fun RepositoryService.loadWorstDayProcessByDeployment(deploymentId: String) = this.createProcessDefinitionQuery().deploymentId(deploymentId).singleResult().id.let { loadWorstDayProcess(it) }
-internal fun RepositoryService.loadWorstDayProcess(processDefinitionId: String) = WorstDayProcess.readFromModelInstance(this.getBpmnModelInstance(processDefinitionId)).copy(processDefinitionId = processDefinitionId)
-internal fun RuntimeService.findSingleInstance(process:WorstDayProcess) : ProcessInstance? = this.createProcessInstanceQuery().processDefinitionId(process.processDefinitionId).singleResult()
+internal fun RuntimeService.findSingleInstance(process: WorstDayProcess): ProcessInstance? = this.createProcessInstanceQuery()
+  .processDefinitionId(process.processDefinitionId)
+  .singleResult()

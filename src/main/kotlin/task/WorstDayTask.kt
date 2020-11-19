@@ -1,4 +1,4 @@
-package process
+package io.holunda.funstuff.lumberghini.task
 
 /**
  * A user task in the process, defined by id, name and description.

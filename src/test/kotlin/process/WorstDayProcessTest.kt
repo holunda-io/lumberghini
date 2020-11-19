@@ -4,7 +4,7 @@ import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import process.WorstDayTask
+import io.holunda.funstuff.lumberghini.task.WorstDayTask
 
 class WorstDayProcessTest {
 
@@ -58,6 +58,8 @@ class WorstDayProcessTest {
       WorstDayProcessFixtures.task2.withIndex(0),
       WorstDayProcessFixtures.task1.withIndex(1)
     )
+
+    println(process.bpmnXml)
   }
 
   @Test

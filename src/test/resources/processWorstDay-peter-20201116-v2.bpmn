@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="definitions_61603050-6eb7-4980-bc3c-740915e73d2a" targetNamespace="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL">
+  <process camunda:isStartableInTasklist="false" camunda:versionTag="2" id="processWorstDay-peter-20201116" isExecutable="true" name="Worst Day in the life of peter (2020-11-16)">
+    <startEvent id="startEvent" name="Started in good mood">
+      <outgoing>sequenceFlow_c4190e10-5013-4df0-b812-0b32be61269c</outgoing>
+    </startEvent>
+    <userTask id="task2-000" name="Task 2">
+      <documentation id="documentation_3cbea4e3-b7b9-4edf-a783-33a65b55d30d">the task two</documentation>
+      <incoming>sequenceFlow_c4190e10-5013-4df0-b812-0b32be61269c</incoming>
+      <outgoing>sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59</outgoing>
+    </userTask>
+    <sequenceFlow id="sequenceFlow_c4190e10-5013-4df0-b812-0b32be61269c" sourceRef="startEvent" targetRef="task2-000"/>
+    <userTask id="task1-001" name="Task 1">
+      <documentation id="documentation_4d250e7b-35ac-45f8-97a5-71ebc8a0b83a">the task one</documentation>
+      <incoming>sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59</incoming>
+      <outgoing>sequenceFlow_2c4f4261-fa61-4cb0-90ad-d7e33bd17663</outgoing>
+    </userTask>
+    <sequenceFlow id="sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59" sourceRef="task2-000" targetRef="task1-001"/>
+    <endEvent id="endEvent" name="Beer O'clock">
+      <extensionElements>
+        <camunda:executionListener delegateExpression="#{worstDayProcessService.migrateNextVersion()}" event="start"/>
+      </extensionElements>
+      <incoming>sequenceFlow_2c4f4261-fa61-4cb0-90ad-d7e33bd17663</incoming>
+    </endEvent>
+    <sequenceFlow id="sequenceFlow_2c4f4261-fa61-4cb0-90ad-d7e33bd17663" sourceRef="task1-001" targetRef="endEvent"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_e2def008-687b-4878-aa14-eafa93b7e72b">
+    <bpmndi:BPMNPlane bpmnElement="processWorstDay-peter-20201116" id="BPMNPlane_30583a27-7391-4f21-bcb2-f5d65bfb7975">
+      <bpmndi:BPMNShape bpmnElement="startEvent" id="BPMNShape_a3a73695-f2f6-4b32-a457-db882f943919">
+        <dc:Bounds height="36.0" width="36.0" x="100.0" y="100.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="task2-000" id="BPMNShape_142d7c85-d422-4d1d-9af3-f64c1dc038f9">
+        <dc:Bounds height="80.0" width="100.0" x="186.0" y="78.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow_c4190e10-5013-4df0-b812-0b32be61269c" id="BPMNEdge_6fd9133d-0c76-4760-8c1e-10e8e17c0908">
+        <di:waypoint x="136.0" y="118.0"/>
+        <di:waypoint x="186.0" y="118.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape bpmnElement="task1-001" id="BPMNShape_8270afe3-8296-48fe-a922-d10bf71e6344">
+        <dc:Bounds height="80.0" width="100.0" x="336.0" y="78.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59" id="BPMNEdge_ebe6c04e-783a-4945-a744-78019b390416">
+        <di:waypoint x="286.0" y="118.0"/>
+        <di:waypoint x="336.0" y="118.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape bpmnElement="endEvent" id="BPMNShape_465cf041-0f90-4a02-bb67-e7479414bfa8">
+        <dc:Bounds height="36.0" width="36.0" x="486.0" y="100.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow_2c4f4261-fa61-4cb0-90ad-d7e33bd17663" id="BPMNEdge_0be209d6-cc19-46ea-a0d6-866602f73b5c">
+        <di:waypoint x="436.0" y="118.0"/>
+        <di:waypoint x="486.0" y="118.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -1,10 +1,8 @@
 package io.holunda.funstuff.lumberghini.test
 
-import io.holunda.funstuff.lumberghini.process.FindNextTaskStrategy
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess
-import org.assertj.core.api.Assertions.assertThat
-import org.camunda.bpm.engine.test.ProcessEngineRule
-import process.WorstDayTask
+import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.processDefinitionKey
+import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import java.time.LocalDate
 
 object WorstDayProcessFixtures {
@@ -13,6 +11,8 @@ object WorstDayProcessFixtures {
 
   val day = LocalDate.parse("2020-11-16")
   val daySupplier = { LocalDate.parse("2020-11-16") }
+
+  val processDefinitionKey = processDefinitionKey(userName, day)
 
   val task1 = WorstDayTask(
     id = "task1",
@@ -31,10 +31,5 @@ object WorstDayProcessFixtures {
     task = task1
   )
 
-  object Camunda {
-
-    fun ProcessEngineRule.noProcessesDeployed() = assertThat(this.repositoryService.createProcessDefinitionQuery().list()).isEmpty()
-
-  }
 }
 

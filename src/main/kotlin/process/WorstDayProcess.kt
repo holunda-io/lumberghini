@@ -1,13 +1,14 @@
 package io.holunda.funstuff.lumberghini.process
 
 import mu.KLogging
+import org.camunda.bpm.engine.delegate.ExecutionListener
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
 import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.Process
 import org.camunda.bpm.model.bpmn.instance.Task
 import org.camunda.bpm.model.bpmn.instance.UserTask
-import process.WorstDayTask
+import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -52,6 +53,7 @@ data class WorstDayProcess(
   val processDefinitionId: String? = null
 ) {
   companion object : KLogging() {
+    const val PREFIX = "processWorstDay"
 
     /**
      * A simple "2020116" date formatter.
@@ -79,7 +81,7 @@ data class WorstDayProcess(
     /**
      * Helper function to determine the processDefinitionKey based on  current user and current day.
      */
-    fun processDefinitionKey(userName: String, day: LocalDate) = "processWorstDay-$userName-${day.format(datePattern)}"
+    fun processDefinitionKey(userName: String, day: LocalDate) = "$PREFIX-$userName-${day.format(datePattern)}"
   }
 
   /**
@@ -119,30 +121,7 @@ data class WorstDayProcess(
    * Create the [BpmnModelInstance] based on the tasks of this process.
    */
   val bpmnModelInstance: BpmnModelInstance by lazy {
-    require(tasks.isNotEmpty())
-
-    // this first creates a [BpmnModelInstance] containing only the startEvent, then loops through all the tasks, and finally adds the endEvent.
-    Bpmn.createExecutableProcess(processDefinitionKey)
-      .name(processName)
-      .camundaStartableInTasklist(false)
-      .camundaVersionTag("${version}")
-      .startEvent("startEvent")
-      .done().apply {
-        var lastElementId = "startEvent"
-        tasks.forEach { task ->
-          getModelElementById<FlowNode>(lastElementId).builder()
-            .userTask(task.taskDefinitionKey)
-            .name(task.name)
-            .documentation(task.description)
-
-          // update the lastUserTask id for the next iteration
-          lastElementId = task.taskDefinitionKey
-        }
-
-        getModelElementById<UserTask>(lastElementId).builder()
-          .endEvent("endEvent").name("Beer O'clock")
-          .done()
-      }
+    createBpmnModelInstance(this)
   }
 
   /**
@@ -162,4 +141,38 @@ data class WorstDayProcess(
       .mapIndexed { index, task -> task.withIndex(index) }
       .toList()
   )
+}
+
+
+fun createBpmnModelInstance(process:WorstDayProcess) = with(process) {
+  require(process.tasks.isNotEmpty())
+
+  // this first creates a [BpmnModelInstance] containing only the startEvent, then loops through all the tasks, and finally adds the endEvent.
+  // return
+  Bpmn.createExecutableProcess(processDefinitionKey)
+    .name(processName)
+    .camundaStartableInTasklist(false)
+    .camundaVersionTag("${version}")
+    .startEvent("startEvent").name("Started in good mood")
+    .done()
+    .apply {
+      var lastElementId = "startEvent"
+      tasks.forEach { task ->
+        getModelElementById<FlowNode>(lastElementId).builder()
+          .userTask(task.taskDefinitionKey)
+          .name(task.name)
+          .documentation(task.description)
+
+        // update the lastUserTask id for the next iteration
+        lastElementId = task.taskDefinitionKey
+      }
+
+      getModelElementById<UserTask>(lastElementId).builder()
+        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_END, "#{worstDayProcessService.deployNextVersionListener()}")
+        .camundaAsyncAfter()
+        .endEvent("endEvent")
+        .name("Beer O'clock")
+        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_START, "#{worstDayProcessService.migrateNextVersionListener()}")
+        .done()
+    }
 }

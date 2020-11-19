@@ -1,6 +1,6 @@
-package io.holunda.funstuff.lumberghini.process
+package io.holunda.funstuff.lumberghini.task
 
-import process.WorstDayTask
+import io.holunda.funstuff.lumberghini.process.WorstDayProcess
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
