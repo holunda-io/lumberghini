@@ -3,7 +3,7 @@ package io.holunda.funstuff.lumberghini.process
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.PREFIX
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessTestContext
-import io.holunda.funstuff.lumberghini.test.manageDeployments
+import io.holunda.funstuff.lumberghini.test.WorstDayProcessTestContext.Companion.manageDeployments
 import org.assertj.core.api.Assertions.assertThat
 import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.camunda.bpm.engine.test.Deployment

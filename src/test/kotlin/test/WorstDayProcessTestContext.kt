@@ -8,12 +8,16 @@ import org.camunda.bpm.engine.ProcessEngineConfiguration
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration
 import org.camunda.bpm.engine.impl.history.HistoryLevel
+import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.test.ProcessEngineRule
 import org.camunda.bpm.engine.test.mock.MockExpressionManager
 
 class WorstDayProcessTestContext(
   private val configuration: StandaloneInMemProcessEngineConfiguration.() -> StandaloneInMemProcessEngineConfiguration = { this }
 ) : ProcessEngineServices {
+  companion object {
+    fun ProcessEngineRule.manageDeployments(deployments: List<Deployment>) = deployments.forEach { this.manageDeployment(it) }
+  }
 
   val processEngineConfiguration: StandaloneInMemProcessEngineConfiguration by lazy {
     StandaloneInMemProcessEngineConfiguration().apply {
