@@ -9,10 +9,10 @@ data class WorstDayProcessInstance(
   val processDefinitionId: String,
   val processInstance: ProcessInstance? = null,
   private val runtimeService: RuntimeService,
-  private val repository: WorstDayProcessRepository
+  private val repository: WorstDayProcessDefinitionRepository
 ) {
 
-  constructor(processInstance: ProcessInstance, runtimeService: RuntimeService, repository: WorstDayProcessRepository) : this(
+  constructor(processInstance: ProcessInstance, runtimeService: RuntimeService, repository: WorstDayProcessDefinitionRepository) : this(
     processInstance.processInstanceId,
     processInstance.processDefinitionId,
     processInstance,
@@ -20,7 +20,7 @@ data class WorstDayProcessInstance(
     repository
   )
 
-  constructor(execution: DelegateExecution, repository: WorstDayProcessRepository) : this(
+  constructor(execution: DelegateExecution, repository: WorstDayProcessDefinitionRepository) : this(
     execution.processInstanceId,
     execution.processDefinitionId,
     null,

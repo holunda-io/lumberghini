@@ -15,7 +15,7 @@ class WorstDayProcessService(
   private val runtimeService: RuntimeService,
   private val findNextTaskStrategy: FindNextTaskStrategy,
   private val todaySupplier: () -> LocalDate = { LocalDate.now() },
-  private val repository: WorstDayProcessRepository
+  private val repository: WorstDayProcessDefinitionRepository
 ) {
 
   fun deployNextVersionListener() = ExecutionListener {
@@ -37,6 +37,7 @@ class WorstDayProcessService(
       currentProcess.processDefinitionId,
       nextProcess.processDefinitionId
     ).mapEqualActivities()
+      .mapActivities("intermediate", currentProcess.tasks.last().taskDefinitionKey)
       .build())
       .processInstanceIds(it.processInstanceId)
       .execute()

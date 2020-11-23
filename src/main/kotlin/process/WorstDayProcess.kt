@@ -170,9 +170,11 @@ fun createBpmnModelInstance(process:WorstDayProcess) = with(process) {
       getModelElementById<UserTask>(lastElementId).builder()
         .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_END, "#{worstDayProcessService.deployNextVersionListener()}")
         .camundaAsyncAfter()
+        .intermediateThrowEvent("intermediate")
+        .camundaAsyncBefore()
+        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_START, "#{worstDayProcessService.migrateNextVersionListener()}")
         .endEvent("endEvent")
         .name("Beer O'clock")
-        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_START, "#{worstDayProcessService.migrateNextVersionListener()}")
         .done()
     }
 }

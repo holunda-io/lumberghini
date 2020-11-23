@@ -11,7 +11,10 @@ import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*
 import org.camunda.bpm.engine.test.mock.Mocks
 import org.camunda.bpm.engine.variable.Variables
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat as cAssertThat
 
 class WorstDayProcessServiceTest {
@@ -37,15 +40,15 @@ class WorstDayProcessServiceTest {
   }
 
   @Test
-  @Ignore
+  fun `can deploy`() {
+    service.deploy(service.create(WorstDayProcessFixtures.userName))
+  }
+
+  @Test
   fun `create, deploy and start process for user`() {
     val processInstance = service.start(WorstDayProcessFixtures.userName)
 
     cAssertThat(processInstance.processInstance).isActive().isWaitingAt("task1-000")
-
-    complete(task())
-    execute(job())
-    cAssertThat(processInstance.processInstance).isEnded
   }
 
   @Test
@@ -59,6 +62,8 @@ class WorstDayProcessServiceTest {
     val processVersion1 = repository.loadByProcessDefinitionId(processInstance.processDefinitionId)
 
     val processVersion2 = service.deployNextVersion(processVersion1)
+
+    println(processVersion2.bpmnXml)
 
     assertThat(camunda.repositoryService.createProcessDefinitionQuery().list()).hasSize(2)
 
@@ -76,10 +81,10 @@ class WorstDayProcessServiceTest {
       .singleResult().processDefinitionId)
       .isEqualTo(processVersion2.processDefinitionId)
 
-    cAssertThat(processInstance.processInstance).isActive().isWaitingAt("task1-000")
+    cAssertThat(processInstance.processInstance).isActive.isWaitingAt("task1-000")
 
     complete(task())
-    cAssertThat(processInstance.processInstance).isActive().isWaitingAt("task2-001")
+    cAssertThat(processInstance.processInstance).isActive.isWaitingAt("task2-001")
   }
 
   @Test
@@ -122,7 +127,7 @@ class WorstDayProcessServiceTest {
     execute(job("serviceTask_start"))
     cAssertThat(starterInstance).isEnded
 
-    val processInstance : ProcessInstance = camunda.runtimeService.createProcessInstanceQuery().processDefinitionKey(WorstDayProcessFixtures.processDefinitionKey).singleResult()
+    val processInstance: ProcessInstance = camunda.runtimeService.createProcessInstanceQuery().processDefinitionKey(WorstDayProcessFixtures.processDefinitionKey).singleResult()
     assertThat(processInstance).isNotNull
     cAssertThat(processInstance).isWaitingAt("task1-000")
   }

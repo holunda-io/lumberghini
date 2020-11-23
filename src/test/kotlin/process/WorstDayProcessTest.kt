@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
+import org.camunda.bpm.model.bpmn.Bpmn
 
 class WorstDayProcessTest {
 
@@ -23,6 +24,7 @@ class WorstDayProcessTest {
       task = WorstDayProcessFixtures.task1.withIndex(100)
     )
 
+    Bpmn.validateModel(process.bpmnModelInstance)
     assertThat(process.tasks).hasSize(1)
     assertThat(process.tasks.first().index).isEqualTo(0)
     assertThat(process.tasks.first().taskDefinitionKey).isEqualTo("task1-000")
@@ -43,6 +45,7 @@ class WorstDayProcessTest {
     // add a task
     process = process.addTask(WorstDayProcessFixtures.task1)
 
+    Bpmn.validateModel(process.bpmnModelInstance)
     assertThat(process.version).isEqualTo(2)
 
     assertThat(process.tasks).containsExactly(

@@ -1,6 +1,6 @@
 package io.holunda.funstuff.lumberghini.test
 
-import io.holunda.funstuff.lumberghini.process.WorstDayProcessRepository
+import io.holunda.funstuff.lumberghini.process.WorstDayProcessDefinitionRepository
 import io.holunda.funstuff.lumberghini.process.WorstDayProcessService
 import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
 import org.camunda.bpm.engine.ProcessEngine
@@ -35,8 +35,8 @@ class WorstDayProcessTestContext(
 
   val rule: ProcessEngineRule by lazy { ProcessEngineRule(processEngine) }
 
-  val repository: WorstDayProcessRepository by lazy {
-    WorstDayProcessRepository(
+  val repository: WorstDayProcessDefinitionRepository by lazy {
+    WorstDayProcessDefinitionRepository(
       repositoryService = repositoryService,
       todaySupplier = WorstDayProcessFixtures.daySupplier
     )

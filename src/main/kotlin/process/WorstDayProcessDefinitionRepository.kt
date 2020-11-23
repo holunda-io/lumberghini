@@ -10,7 +10,7 @@ import org.camunda.bpm.engine.repository.Deployment
 import org.springframework.stereotype.Component
 
 @Component
-class WorstDayProcessRepository(
+class WorstDayProcessDefinitionRepository(
   private val repositoryService: RepositoryService,
   private val todaySupplier: TodaySupplier
 ) {
@@ -37,7 +37,7 @@ class WorstDayProcessRepository(
     return loadByProcessDefinitionId(definitionId)
   }
 
-  fun deploy(process: WorstDayProcess) = repositoryService.createDeployment()
+  fun deploy(process: WorstDayProcess): Deployment = repositoryService.createDeployment()
     .addModelInstance(process.processResourceName, process.bpmnModelInstance)
     .deploy()
     .apply { deployments.add(this) }
@@ -50,5 +50,10 @@ class WorstDayProcessRepository(
     .map { loadByProcessDefinitionId(it.id) }
 
 
+  /**
+   * Deployments are collected and can be accessed through this method. Mainly used for testing/housekeeping.
+   *
+   * @return all deployments made by this repository.
+   */
   fun getDeployments() = deployments.toList()
 }

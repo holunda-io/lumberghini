@@ -45,4 +45,5 @@ fun main(args: Array<String>) = runApplication<LumberghiniApplication>(*args)
 typealias TodaySupplier = () -> LocalDate
 typealias UserName = String
 typealias ProcessDefinitionId = String
+typealias ProcessInstanceId = String
 typealias DeploymentId = String
