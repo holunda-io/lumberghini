@@ -2,18 +2,19 @@ package io.holunda.funstuff.lumberghini.test
 
 import io.holunda.funstuff.lumberghini.process.WorstDayProcessDefinitionRepository
 import io.holunda.funstuff.lumberghini.process.WorstDayProcessService
+import io.holunda.funstuff.lumberghini.process.support.MigrationProcess
+import io.holunda.funstuff.lumberghini.process.support.StarterProcess
 import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
-import org.camunda.bpm.engine.ProcessEngine
-import org.camunda.bpm.engine.ProcessEngineConfiguration
-import org.camunda.bpm.engine.ProcessEngineServices
+import org.camunda.bpm.engine.*
 import org.camunda.bpm.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration
 import org.camunda.bpm.engine.impl.history.HistoryLevel
 import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.test.ProcessEngineRule
+import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests
 import org.camunda.bpm.engine.test.mock.MockExpressionManager
 
 class WorstDayProcessTestContext(
-  private val configuration: StandaloneInMemProcessEngineConfiguration.() -> StandaloneInMemProcessEngineConfiguration = { this }
+  private val configuration: StandaloneInMemProcessEngineConfiguration.() -> Unit = { }
 ) : ProcessEngineServices {
   companion object {
     fun ProcessEngineRule.manageDeployments(deployments: List<Deployment>) = deployments.forEach { this.manageDeployment(it) }
@@ -28,7 +29,8 @@ class WorstDayProcessTestContext(
       isDbMetricsReporterActivate = false
       isTelemetryReporterActivate = false
       isInitializeTelemetry = false
-    }.configuration()
+      this.configuration()
+    }
   }
 
   val processEngine: ProcessEngine by lazy { processEngineConfiguration.buildProcessEngine() }
@@ -49,16 +51,26 @@ class WorstDayProcessTestContext(
     repository = repository
   )
 
-  override fun getRuntimeService() = processEngine.runtimeService
-  override fun getRepositoryService() = processEngine.repositoryService
-  override fun getFormService() = processEngine.formService
-  override fun getTaskService() = processEngine.taskService
-  override fun getHistoryService() = processEngine.historyService
-  override fun getIdentityService() = processEngine.identityService
-  override fun getManagementService() = processEngine.managementService
-  override fun getAuthorizationService() = processEngine.authorizationService
-  override fun getCaseService() = processEngine.caseService
-  override fun getFilterService() = processEngine.filterService
-  override fun getExternalTaskService() = processEngine.externalTaskService
-  override fun getDecisionService() = processEngine.decisionService
+  val migrationProcess = MigrationProcess(
+    runtimeService = runtimeService,
+    repository = repository,
+    service = service
+  )
+
+  val starterProcess = StarterProcess(
+    runtimeService = runtimeService
+  )
+
+  override fun getRuntimeService(): RuntimeService = processEngine.runtimeService
+  override fun getRepositoryService(): RepositoryService = processEngine.repositoryService
+  override fun getFormService(): FormService = processEngine.formService
+  override fun getTaskService(): TaskService = processEngine.taskService
+  override fun getHistoryService(): HistoryService = processEngine.historyService
+  override fun getIdentityService(): IdentityService = processEngine.identityService
+  override fun getManagementService(): ManagementService = processEngine.managementService
+  override fun getAuthorizationService(): AuthorizationService = processEngine.authorizationService
+  override fun getCaseService(): CaseService = processEngine.caseService
+  override fun getFilterService(): FilterService = processEngine.filterService
+  override fun getExternalTaskService(): ExternalTaskService = processEngine.externalTaskService
+  override fun getDecisionService(): DecisionService = processEngine.decisionService
 }

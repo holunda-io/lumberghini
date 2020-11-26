@@ -1,7 +1,12 @@
 package io.holunda.funstuff.lumberghini.process
 
+import io.holunda.funstuff.lumberghini.DelegateExpression
 import io.holunda.funstuff.lumberghini.UserName
+import io.holunda.funstuff.lumberghini.camunda.CamundaExtensions.execute
+import io.holunda.funstuff.lumberghini.camunda.CamundaExtensions.suspend
+import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.startMigrationProcess
 import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
+import mu.KLogging
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.ExecutionListener
@@ -10,44 +15,34 @@ import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
-@Component
+@Component(WorstDayProcessService.NAME)
 class WorstDayProcessService(
   private val runtimeService: RuntimeService,
   private val findNextTaskStrategy: FindNextTaskStrategy,
   private val todaySupplier: () -> LocalDate = { LocalDate.now() },
   private val repository: WorstDayProcessDefinitionRepository
 ) {
+  companion object : KLogging() {
+    const val NAME = "worstDayProcessService"
 
-  fun deployNextVersionListener() = ExecutionListener {
-    val nextProcess = findNextTaskStrategy.nextVersion(repository.loadByProcessDefinitionId(it.processDefinitionId))
-    val deploymentId = repository.deploy(nextProcess).id
-    it.setVariable("nextVersionDeploymentId", deploymentId)
+    private fun RuntimeService.findSingleInstance(process: WorstDayProcess): ProcessInstance? = this.createProcessInstanceQuery()
+      .processDefinitionId(process.processDefinitionId)
+      .singleResult()
   }
 
-  fun migrateNextVersionListener(): ExecutionListener = ExecutionListener {
-    val currentProcess = repository.loadByProcessDefinitionId(it.processDefinitionId)
-    val nextProcess = repository.loadByDeploymentId(it.getVariable("nextVersionDeploymentId") as String)
-
-    val migrationPlan = runtimeService.createMigrationPlan(currentProcess.processDefinitionId, nextProcess.processDefinitionId)
-      .mapEqualActivities()
-      //.mapActivities("endEvent", nextProcess.tasks.last().taskDefinitionKey)
-      .build()
-
-    runtimeService.newMigration(runtimeService.createMigrationPlan(
-      currentProcess.processDefinitionId,
-      nextProcess.processDefinitionId
-    ).mapEqualActivities()
-      .mapActivities("intermediate", currentProcess.tasks.last().taskDefinitionKey)
-      .build())
-      .processInstanceIds(it.processInstanceId)
-      .execute()
+  @DelegateExpression
+  fun startMigrationListener() = ExecutionListener {
+    it.startMigrationProcess(it.processInstanceId, it.processDefinitionId)
   }
 
+  @DelegateExpression
+  fun createIncidentListener() = ExecutionListener {
+    throw IllegalStateException("this is not supposed to finish!")
+  }
 
-  fun start(userName: String): WorstDayProcessInstance {
+  fun start(userName: String): ProcessInstance {
     val process = findDeployedProcess(userName) ?: deploy(create(userName))
-    val processInstance = runtimeService.findSingleInstance(process) ?: runtimeService.startProcessInstanceByKey(process.processDefinitionKey)
-    return wrap(processInstance)
+    return runtimeService.findSingleInstance(process) ?: runtimeService.startProcessInstanceByKey(process.processDefinitionKey)
   }
 
   fun create(userName: UserName) = WorstDayProcess(
@@ -55,6 +50,8 @@ class WorstDayProcessService(
     userName = userName,
     task = findNextTaskStrategy.next()
   )
+
+  fun createNext(process: WorstDayProcess): WorstDayProcess = findNextTaskStrategy.nextVersion(process)
 
   fun createAndDeploy(userName: UserName) = repository.deploy(
     create(userName)
@@ -72,13 +69,4 @@ class WorstDayProcessService(
   }
 
   fun deployNextVersion(process: WorstDayProcess) = deploy(findNextTaskStrategy.nextVersion(process))
-
-
-  fun wrap(processInstance: ProcessInstance) = WorstDayProcessInstance(processInstance, runtimeService, repository)
-
-  private fun DelegateExecution.toWorstDayProcessInstance() = WorstDayProcessInstance(this, repository)
 }
-
-internal fun RuntimeService.findSingleInstance(process: WorstDayProcess): ProcessInstance? = this.createProcessInstanceQuery()
-  .processDefinitionId(process.processDefinitionId)
-  .singleResult()

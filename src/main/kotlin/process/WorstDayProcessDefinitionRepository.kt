@@ -7,10 +7,12 @@ import io.holunda.funstuff.lumberghini.UserName
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.PREFIX
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.repository.Deployment
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Component
 
 @Component
 class WorstDayProcessDefinitionRepository(
+  @Lazy
   private val repositoryService: RepositoryService,
   private val todaySupplier: TodaySupplier
 ) {
@@ -46,7 +48,7 @@ class WorstDayProcessDefinitionRepository(
     .active()
     .processDefinitionKeyLike("$PREFIX-")
     .list()
-    .filterNot { it.key.endsWith("-starter") }
+    .filterNot { it.key.endsWith("-starter") || it.key.endsWith("-migration") }
     .map { loadByProcessDefinitionId(it.id) }
 
 

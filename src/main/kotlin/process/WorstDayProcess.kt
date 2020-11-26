@@ -1,5 +1,6 @@
 package io.holunda.funstuff.lumberghini.process
 
+import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import mu.KLogging
 import org.camunda.bpm.engine.delegate.ExecutionListener
 import org.camunda.bpm.model.bpmn.Bpmn
@@ -8,7 +9,6 @@ import org.camunda.bpm.model.bpmn.instance.FlowNode
 import org.camunda.bpm.model.bpmn.instance.Process
 import org.camunda.bpm.model.bpmn.instance.Task
 import org.camunda.bpm.model.bpmn.instance.UserTask
-import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -144,7 +144,7 @@ data class WorstDayProcess(
 }
 
 
-fun createBpmnModelInstance(process:WorstDayProcess) = with(process) {
+fun createBpmnModelInstance(process: WorstDayProcess) = with(process) {
   require(process.tasks.isNotEmpty())
 
   // this first creates a [BpmnModelInstance] containing only the startEvent, then loops through all the tasks, and finally adds the endEvent.
@@ -168,13 +168,12 @@ fun createBpmnModelInstance(process:WorstDayProcess) = with(process) {
       }
 
       getModelElementById<UserTask>(lastElementId).builder()
-        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_END, "#{worstDayProcessService.deployNextVersionListener()}")
         .camundaAsyncAfter()
-        .intermediateThrowEvent("intermediate")
+        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_END, "#{worstDayProcessService.startMigrationListener()}")
+        .endEvent("endEvent").name("Reached Beer O'clock")
         .camundaAsyncBefore()
-        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_START, "#{worstDayProcessService.migrateNextVersionListener()}")
-        .endEvent("endEvent")
-        .name("Beer O'clock")
+        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_START, "#{worstDayProcessService.createIncidentListener()}")
+        .camundaFailedJobRetryTimeCycle("R1/PT1M")
         .done()
     }
 }

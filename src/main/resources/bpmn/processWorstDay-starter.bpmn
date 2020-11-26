@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" id="definitions_61603050-6eb7-4980-bc3c-740915e73d2a" targetNamespace="http://www.omg.org/spec/BPMN/20100524/MODEL" exporter="Camunda Modeler" exporterVersion="4.4.0">
   <process id="processWorstDay-starter" name="Worst Day in the life of ... " isExecutable="true" camunda:versionTag="1">
-    <startEvent id="startEvent" name="Stert requested">
+    <documentation>Generate, deploy and start the worstDayProcess for given userName.</documentation>
+    <startEvent id="startEvent" name="Start requested">
       <extensionElements>
         <camunda:formData>
           <camunda:formField id="userName" label="Your name" type="string">
@@ -36,6 +37,10 @@
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_e2def008-687b-4878-aa14-eafa93b7e72b">
     <bpmndi:BPMNPlane id="BPMNPlane_30583a27-7391-4f21-bcb2-f5d65bfb7975" bpmnElement="processWorstDay-starter">
+      <bpmndi:BPMNEdge id="Flow_0l30jxc_di" bpmnElement="Flow_0l30jxc">
+        <di:waypoint x="370" y="118" />
+        <di:waypoint x="430" y="118" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_ebe6c04e-783a-4945-a744-78019b390416" bpmnElement="sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59">
         <di:waypoint x="530" y="118" />
         <di:waypoint x="592" y="118" />
@@ -44,15 +49,20 @@
         <di:waypoint x="216" y="118" />
         <di:waypoint x="270" y="118" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0l30jxc_di" bpmnElement="Flow_0l30jxc">
-        <di:waypoint x="370" y="118" />
-        <di:waypoint x="430" y="118" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_a3a73695-f2f6-4b32-a457-db882f943919" bpmnElement="startEvent">
         <dc:Bounds x="180" y="100" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="160" y="76" width="76" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_465cf041-0f90-4a02-bb67-e7479414bfa8" bpmnElement="endEvent">
+        <dc:Bounds x="592" y="100" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="572" y="136" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0itk0wq_di" bpmnElement="serviceTask_start">
+        <dc:Bounds x="430" y="78" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataObjectReference_19lr4c3_di" bpmnElement="DataObjectReference_19lr4c3">
         <dc:Bounds x="180" y="225" width="36" height="50" />
@@ -60,17 +70,8 @@
           <dc:Bounds x="172" y="282" width="53" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0itk0wq_di" bpmnElement="serviceTask_start">
-        <dc:Bounds x="430" y="78" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1mf798e_di" bpmnElement="serviceTask_deploy">
         <dc:Bounds x="270" y="78" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_465cf041-0f90-4a02-bb67-e7479414bfa8" bpmnElement="endEvent">
-        <dc:Bounds x="592" y="100" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="572" y="136" width="77" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="DataOutputAssociation_12rkcfc_di" bpmnElement="DataOutputAssociation_12rkcfc">
         <di:waypoint x="198" y="136" />

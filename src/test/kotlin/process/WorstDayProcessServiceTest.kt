@@ -1,37 +1,41 @@
 package io.holunda.funstuff.lumberghini.process
 
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.PREFIX
+import io.holunda.funstuff.lumberghini.process.support.MigrationProcess
+import io.holunda.funstuff.lumberghini.process.support.StarterProcess
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessTestContext
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessTestContext.Companion.manageDeployments
 import org.assertj.core.api.Assertions.assertThat
 import org.camunda.bpm.engine.runtime.ProcessInstance
+import org.camunda.bpm.engine.spring.annotations.StartProcess
 import org.camunda.bpm.engine.test.Deployment
-import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*
-import org.camunda.bpm.engine.test.mock.Mocks
 import org.camunda.bpm.engine.variable.Variables
+import org.camunda.bpm.extension.mockito.CamundaMockito
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat as cAssertThat
 
+@Deployment(resources = [StarterProcess.BPMN, MigrationProcess.BPMN])
 class WorstDayProcessServiceTest {
-  val context = WorstDayProcessTestContext()
+  private val context = WorstDayProcessTestContext()
 
   @get:Rule
   val camunda = context.rule
 
-  val repository = context.repository
-  val service = context.service
+  private val repository = context.repository
+  private val service = context.service
 
   @Before
   fun setUp() {
-    BpmnAwareTests.init(camunda.processEngine)
+    init(camunda.processEngine)
     // make sure no processes are deployed
     assertThat(repository.findAll()).isEmpty()
-    Mocks.register("worstDayProcessService", service)
+    CamundaMockito.registerInstance(service)
+    CamundaMockito.registerInstance(context.migrationProcess)
   }
 
   @After
@@ -48,14 +52,14 @@ class WorstDayProcessServiceTest {
   fun `create, deploy and start process for user`() {
     val processInstance = service.start(WorstDayProcessFixtures.userName)
 
-    cAssertThat(processInstance.processInstance).isActive().isWaitingAt("task1-000")
+    cAssertThat(processInstance).isActive.isWaitingAt("task1-000")
   }
 
   @Test
   fun `deploy next version and migrate`() {
     val processInstance = service.start(WorstDayProcessFixtures.userName)
-    cAssertThat(processInstance.processInstance)
-      .isActive()
+    cAssertThat(processInstance)
+      .isActive
       .isWaitingAt("task1-000")
     assertThat(camunda.repositoryService.createProcessDefinitionQuery().list()).hasSize(1)
 
@@ -81,10 +85,10 @@ class WorstDayProcessServiceTest {
       .singleResult().processDefinitionId)
       .isEqualTo(processVersion2.processDefinitionId)
 
-    cAssertThat(processInstance.processInstance).isActive.isWaitingAt("task1-000")
+    cAssertThat(processInstance).isActive.isWaitingAt("task1-000")
 
     complete(task())
-    cAssertThat(processInstance.processInstance).isActive.isWaitingAt("task2-001")
+    cAssertThat(processInstance).isActive.isWaitingAt("task2-001")
   }
 
   @Test
