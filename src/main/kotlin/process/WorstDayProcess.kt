@@ -144,7 +144,7 @@ data class WorstDayProcess(
 }
 
 
-fun createBpmnModelInstance(process: WorstDayProcess) = with(process) {
+fun createBpmnModelInstance(process: WorstDayProcess): BpmnModelInstance = with(process) {
   require(process.tasks.isNotEmpty())
 
   // this first creates a [BpmnModelInstance] containing only the startEvent, then loops through all the tasks, and finally adds the endEvent.
@@ -162,7 +162,6 @@ fun createBpmnModelInstance(process: WorstDayProcess) = with(process) {
           .userTask(task.taskDefinitionKey)
           .name(task.name)
           .documentation(task.description)
-
         // update the lastUserTask id for the next iteration
         lastElementId = task.taskDefinitionKey
       }
@@ -172,7 +171,7 @@ fun createBpmnModelInstance(process: WorstDayProcess) = with(process) {
         .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_END, "#{worstDayProcessService.startMigrationListener()}")
         .endEvent("endEvent").name("Reached Beer O'clock")
         .camundaAsyncBefore()
-        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_START, "#{worstDayProcessService.createIncidentListener()}")
+        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_START, "#{worstDayProcessService.throwLumberghInterventionListener()}")
         .camundaFailedJobRetryTimeCycle("R1/PT1M")
         .done()
     }

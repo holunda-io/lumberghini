@@ -2,13 +2,10 @@ package io.holunda.funstuff.lumberghini.process
 
 import io.holunda.funstuff.lumberghini.DelegateExpression
 import io.holunda.funstuff.lumberghini.UserName
-import io.holunda.funstuff.lumberghini.camunda.CamundaExtensions.execute
-import io.holunda.funstuff.lumberghini.camunda.CamundaExtensions.suspend
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.startMigrationProcess
 import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
 import mu.KLogging
 import org.camunda.bpm.engine.RuntimeService
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.ExecutionListener
 import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.runtime.ProcessInstance
@@ -32,13 +29,13 @@ class WorstDayProcessService(
 
   @DelegateExpression
   fun startMigrationListener() = ExecutionListener {
-    it.startMigrationProcess(it.processInstanceId, it.processDefinitionId)
+    with(it) {
+      startMigrationProcess(processInstanceId, processDefinitionId)
+    }
   }
 
   @DelegateExpression
-  fun createIncidentListener() = ExecutionListener {
-    throw IllegalStateException("this is not supposed to finish!")
-  }
+  fun throwLumberghInterventionListener()  = LumberghInterventionException.throwExceptionListener()
 
   fun start(userName: String): ProcessInstance {
     val process = findDeployedProcess(userName) ?: deploy(create(userName))

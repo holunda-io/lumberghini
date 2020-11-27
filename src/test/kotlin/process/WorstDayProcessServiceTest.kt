@@ -56,42 +56,6 @@ class WorstDayProcessServiceTest {
   }
 
   @Test
-  fun `deploy next version and migrate`() {
-    val processInstance = service.start(WorstDayProcessFixtures.userName)
-    cAssertThat(processInstance)
-      .isActive
-      .isWaitingAt("task1-000")
-    assertThat(camunda.repositoryService.createProcessDefinitionQuery().list()).hasSize(1)
-
-    val processVersion1 = repository.loadByProcessDefinitionId(processInstance.processDefinitionId)
-
-    val processVersion2 = service.deployNextVersion(processVersion1)
-
-    println(processVersion2.bpmnXml)
-
-    assertThat(camunda.repositoryService.createProcessDefinitionQuery().list()).hasSize(2)
-
-    camunda.runtimeService.newMigration(camunda.runtimeService.createMigrationPlan(
-      processVersion1.processDefinitionId,
-      processVersion2.processDefinitionId
-    ).mapEqualActivities()
-      .build())
-      .processInstanceIds(processInstance.processInstanceId)
-      .execute()
-
-    assertThat(camunda.runtimeService
-      .createProcessInstanceQuery()
-      .processInstanceId(processInstance.processInstanceId)
-      .singleResult().processDefinitionId)
-      .isEqualTo(processVersion2.processDefinitionId)
-
-    cAssertThat(processInstance).isActive.isWaitingAt("task1-000")
-
-    complete(task())
-    cAssertThat(processInstance).isActive.isWaitingAt("task2-001")
-  }
-
-  @Test
   fun `deploy created process`() {
     assertThat(repository.getDeployments()).isEmpty()
 
@@ -115,7 +79,6 @@ class WorstDayProcessServiceTest {
   }
 
   @Test
-  @Deployment(resources = ["bpmn/processWorstDay-starter.bpmn"])
   fun `use starter process to generate and start worstDayProcess`() {
     assertThat(repository.findAll()).isEmpty()
 

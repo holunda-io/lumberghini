@@ -13,7 +13,6 @@ import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companio
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.VARIABLES.LAST_USER_TASK_KEY
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.VARIABLES.SOURCE_PROCESS_DEFINITION_ID
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.VARIABLES.TARGET_PROCESS_DEFINITION_ID
-import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.variableTargetProcessDefinitionId
 import mu.KLogging
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -102,7 +101,6 @@ class MigrationProcess(
     // we have to load the process here to get the targetDefinitionId because it is not available
     // in the previous deployment step
     val targetProcessDefinitionId = repository.loadByDeploymentId(it.variableDeploymentId).processDefinitionId
-    logger.info { "targetProcessDefinition=$targetProcessDefinitionId" }
     it.variableTargetProcessDefinitionId = targetProcessDefinitionId
 
     logger.info { "variables= ${it.variables}" }
@@ -123,13 +121,5 @@ class MigrationProcess(
       .startBeforeActivity(it.variableLastUserTaskKey)
       .cancelAllForActivity("endEvent")
       .execute()
-  }
-
-  /**
-   * End the suspension of the now migrated and modified instance so it continues running again.
-   */
-  @DelegateExpression
-  fun reactivateProcessInstanceDelegate() = JavaDelegate {
-    //it.runtimeService.activateProcessInstanceById(it.variableProcessInstanceId)
   }
 }

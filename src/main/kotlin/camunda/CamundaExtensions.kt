@@ -5,6 +5,8 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl
 import org.camunda.bpm.engine.impl.interceptor.Command
 import org.camunda.bpm.engine.impl.interceptor.CommandContext
+import org.camunda.bpm.model.bpmn.builder.AbstractFlowNodeBuilder
+import org.camunda.bpm.model.bpmn.instance.FlowNode
 
 object CamundaExtensions {
   val CommandContext.runtimeService get() = this.processEngineConfiguration.runtimeService

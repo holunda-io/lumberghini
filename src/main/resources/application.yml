@@ -10,15 +10,14 @@ spring:
   application:
     name: ${application.name}
   datasource:
-    url: jdbc:postgresql://localhost/${application.name}
-    username: ${application.name}
-    password: ${application.name}
+    url: "jdbc:h2:mem:${application.name}"
+    driverClassName: org.h2.Driver
+    username: "sa"
+    password: "sa"
   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
     generate-ddl: false
     hibernate.ddl-auto: none
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL94Dialect
     show-sql: false
     open-in-view: true
 
@@ -36,7 +35,3 @@ lumberghini:
   quotes:
     list:
       - "Ummh, actually ..."
-
-springdoc:
-  swagger-ui:
-    path: "/swagger-ui.html"

@@ -13,7 +13,6 @@
 		<spring-boot.version>2.3.5.RELEASE</spring-boot.version>
 		<camunda.version>7.14.0</camunda.version>
 		<camunda-data.version>1.1.1</camunda-data.version>
-    <spring-doc.version>1.5.0</spring-doc.version>
 	</properties>
 
 	<dependencyManagement>
@@ -48,25 +47,11 @@
       <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.camunda.bpm.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
-      <version>${spring-doc.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>io.holunda.data</groupId>
       <artifactId>camunda-bpm-data</artifactId>
       <version>${camunda-data.version}</version>
     </dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
     </dependency>
@@ -79,8 +64,9 @@
 			<artifactId>kotlin-stdlib-jdk8</artifactId>
 		</dependency>
     <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -88,10 +74,6 @@
       <optional>true</optional>
     </dependency>
 
-    <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-kotlin</artifactId>
-    </dependency>
     <dependency>
 			<groupId>io.github.microutils</groupId>
 			<artifactId>kotlin-logging-jvm</artifactId>
@@ -116,11 +98,6 @@
 			<scope>test</scope>
 		</dependency>
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.camunda.bpm.extension.mockito</groupId>
       <artifactId>camunda-bpm-mockito</artifactId>
       <version>5.14.0</version>
@@ -129,7 +106,7 @@
     <dependency>
       <groupId>com.tngtech.jgiven</groupId>
       <artifactId>jgiven-junit</artifactId>
-      <version>1.0.0-RC6</version>
+      <version>1.0.0-RC7</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
