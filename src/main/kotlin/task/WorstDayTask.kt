@@ -1,11 +1,14 @@
 package io.holunda.funstuff.lumberghini.task
 
+import io.holunda.funstuff.lumberghini.LumberghiniConfigurationProperties
+
 /**
  * A user task in the process, defined by id, name and description.
  */
 data class WorstDayTask(
   val id: String,
   val name: String,
+  val context: String? = null,
   val description: String,
   val index: Int = 0
 ) {
@@ -15,6 +18,13 @@ data class WorstDayTask(
             name = name,
             description = description,
             index = taskDefinitionKey.substringAfterLast("-").toInt()
+    )
+
+    operator fun invoke(taskData: TaskDataConfiguration) = WorstDayTask(
+      id = taskData.id,
+      name = taskData.name,
+      description = taskData.description,
+      context = taskData.colleague.name
     )
   }
 

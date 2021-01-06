@@ -1,6 +1,7 @@
 package io.holunda.funstuff.lumberghini
 
 import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
+import io.holunda.funstuff.lumberghini.task.TaskDataConfiguration
 import mu.KLogging
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
@@ -48,7 +49,7 @@ class LumberghiniApplication : CommandLineRunner {
 @ConfigurationProperties(prefix = "application.lumberghini")
 @ConstructorBinding
 data class LumberghiniConfigurationProperties(
-  val quotes: String
+  val tasks: List<TaskDataConfiguration>
 )
 
 fun main(args: Array<String>) = runApplication<LumberghiniApplication>(*args)

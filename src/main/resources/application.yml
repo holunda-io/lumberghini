@@ -1,10 +1,162 @@
 application:
   name: lumberghini
-  port: 8081
+  port: ${PORT:8081}
   lumberghini:
-    quotes: "hello World"
-#      list:
-#        - "Ummh, actually ..."
+    tasks:
+      -
+        name: "Please give me my stapler"
+        description: "I need my stapler."
+        colleague: Milton
+      -
+        name: "Hello Peter what's happening."
+        description: "I'm gonna need you to go ahead and come in tomorrow. So if you could be here at around....9 that'd be great."
+        colleague: Bill
+      -
+        name: "I believe you have my stapler."
+        description: "I need my stapler"
+        colleague: Milton
+      -
+        name: "Did you get my memo?"
+        description: "-"
+        colleague: Bill
+      -
+        name: "Oh, and remember: next Friday... is Hawaiian shirt day."
+        description: "So, you know, if you want to, go ahead and wear a Hawaiian shirt and jeans."
+        colleague: Bill
+      -
+        name: "Listen, are you gonna have those TPS reports for us this afternoon?"
+        description: "Hello Peter, what's happening? Listen, are you gonna have those TPS reports for us this afternoon?"
+        colleague: Bill
+      -
+        name: "Ah. Well then I suppose we should go ahead and have a little talk."
+        description: "Ah. Well then I suppose we should go ahead and have a little talk."
+        colleague: Bill
+      -
+        name: "Excuse me, but I think you have my stapler."
+        description: "-"
+        colleague: Milton
+      -
+        name: "PC Load Letter"
+        description: "What the fuck does that mean?"
+        colleague: Michael
+      -
+        name: "I'm also gonna need you to go ahead and come in on Sunday."
+        description: "Yeah........I'm gonna need you to come in on Saturday."
+        colleague: Bill
+      -
+        name: "I’m going to need those TPS reports."
+        description: "I’m going to need those TPS reports...ASAP...So, if you could do that, that’d be great...."
+        colleague: Bill
+      -
+        name: "What's happening? We need to talk about your TPS reports."
+        description: "-"
+        colleague: Dom
+      -
+        name: "We use a different cover sheet now for the TPS reports.."
+        description: "Yeah. The coversheet. I know, I know. Uh, Bill talked to me about it."
+        colleague: Dom
+      -
+        name: "Yeah. Uh, did you get that memo?"
+        description: "Yeah. It's just that we're putting new coversheets on all the TPS reports *before* they go out now. So if you could just remember to do that from now on, that'd be great. All right!"
+        colleague: Dom
+      -
+        name: "You were supposed to come in Saturday."
+        description: "You were supposed to come in Saturday. What were you doing"
+        colleague: Michael
+
+#
+#  This is a... ****!
+#
+#  Uhhh, yeah...
+#  Yeah. I got the memo.
+#  You know, you can just call me "Mike".
+
+#
+#  “I'm going to need those TPS reports... ASAP...”
+#  — Bill Lumbergh, Office Space
+#
+#Tagged: Bosses, Condescension, working overtime
+#  “...So, if you could do that, that would be great...”
+#  — Bill Lumbergh, Office Space
+#
+
+#
+#  “Ah, ah, I almost forgot....I'm also going to need you to go ahead and come in on Sunday, too. We, uhhh, lost some people this week and we sorta need to play catch-up. Mmmmmkay? Thaaaaaanks.”
+#
+#Bill Lumbergh: Oooo...yeahhhh, ummm...I'm gonna have to go ahead and sort of disagree with you there. Yeah, uh, he's been real flaky lately, and I'm just not sure that he's the caliber person that we would want for upper management. He's also been having some problems with his TPS reports.
+#
+#Bill Lumbergh: Yeah, um, well, I'm just not sure about that right now.
+#
+#Bob Slydell: [Pulls Peter's file aside, showing Lumbergh's file next] Yeah, Bill, let me ask you a real quick question here: How much time would you say you spend each week dealing with these TPS reports?
+
+
+#Peter Gibbons: What if we're still doin' this when we're 50?
+#Samir: It would be nice to have that kind of job security.
+
+#Samir: No, not again. I... why does it say paper jam when there is no paper jam? I swear to God, one of these days, I just kick this piece of shit out the window.
+#Michael Bolton: You and me both, man. That thing is lucky I'm not armed.
+#Samir: Piece of shit.
+#
+#  View Quote
+#  [Brian sees Joanna and Peter kissing]
+#Brian: Woah! Hey, get a room you two!
+#  [Imitates Joanna flipping everyone off] Heh, heh!
+#Joanna: I really hate that guy.
+#
+#  View Quote
+#  [after drinking at Peter's] "Back up in your ass with tha resurrection." [reffering to the song they were listening to while they were drinking]
+#
+#  View Quote
+#  [stuck in traffic] Mother... shitter... son of an... ass. Just... [punches steering wheel]
+#
+#  View Quote
+#  Ahh, I'm also going to need you to go ahead and come in on Sunday, too. We've got some new people coming in and we... need to play catch-up. Thanks!
+#
+#  View Quote
+#  And I said, I don't care if they lay me off either, because I told, I told Bill that if they move my desk one more time, then, then I'm quitting, I'm going to quit. And, and I told Don too, because they've moved my desk four times already this year, and I used to be over by the window, and I could see the squirrels, and they were married... But then, they switched from the Swingline to the Boston stapler, but I kept my Swingline stapler because it didn't bind up as much, and I kept the staples for the Swingline stapler and it's not okay because if they take my stapler then I'll, I'll, I'll set the building on fire...
+#
+#  View Quote
+#  And then Mr. Lumbergh told me to talk to payroll and payroll told me to talk to Mr. Lumbergh and and and I still haven't received my paycheck and he took my stapler, and he never brought it back and then they moved my desk to storage room B and there was garbage on it, and I really don't appreciate garbage...
+#
+#  View Quote
+#  Hello Peter, what's happening? Listen, are you gonna have those TPS reports for us this afternoon?
+#
+#
+#  Hey Peter, watch out for your corn hole, buddy!
+#
+#  View Quote
+#  Hey, Peter, man! Check out Channel 9! Check out this chick!
+#
+#  View Quote
+#  I can't believe what a bunch of nerds we are. We're looking up "money laundering" in the dictionary.
+#
+#  View Quote
+#  I could set the building on fire... [said several times in the film, usually after he feels slighted]
+#
+#  View Quote
+#  I gotta wake my ass up at 6am every morning this week--drive up to Las Colinas--yeah I'm doing the drywall at the new McDonalds.
+#
+#  View Quote
+#  I told those fudge packers that I liked Michael Bolton's music.
+#
+#  View Quote
+#  I was told that I could listen, to the radio at a reasonable volume from 9 to 11... well, I... I told Bill that if, if Sandra's going to listen to her headphones while she's, while she's filing then I should be able to listen to the radio while I'm collating so I don't see why I should have to turn it down because I enjoy, listening, at a reasonable volume, from 9 to 11...
+#
+#  View Quote
+#  I was told, I was told if I was late again I would be summarily dismissed...
+#
+#  View Quote
+#I'm thinking about taking that new chick from Logistics. If things go well I might be showing her my O-face. You know: Oh. Oh.
+#
+#  Milt, we're gonna need to go ahead and move you downstairs into storage B. We have some new people coming in, and we need all the space we can get. So if you could go ahead and pack up your stuff and move it down there, that would be terrific, mmmK?
+#
+#Outtakes during credits: Yeah if things go well I might have to take her for a ride on the Bone Coaster.
+#  View Quote
+#  We don't have a lot of time on this earth. We weren't meant to spend it this way. Human beings were not meant to sit in little cubicles staring at computer screens all day, filling out useless forms and listening to eight different bosses drone on about mission statements.
+#
+#  Well, Ok. But... that's the last straw.
+
+
 
 spring:
   application:
@@ -30,8 +182,3 @@ camunda:
       id: admin
     filter:
       create: All
-
-lumberghini:
-  quotes:
-    list:
-      - "Ummh, actually ..."

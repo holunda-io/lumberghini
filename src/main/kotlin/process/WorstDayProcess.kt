@@ -54,6 +54,9 @@ data class WorstDayProcess(
 ) {
   companion object : KLogging() {
     const val PREFIX = "processWorstDay"
+    const val DESCRIPTION = "So, I was sitting in my cubicle today and I realized, " +
+      "ever since I started working, every single day of my life has been worse than the day before it. " +
+      "So, that means that every single day that you see me, that’s on the worst day of my life."
 
     /**
      * A simple "2020116" date formatter.
@@ -145,12 +148,13 @@ data class WorstDayProcess(
 
 
 fun createBpmnModelInstance(process: WorstDayProcess): BpmnModelInstance = with(process) {
-  require(process.tasks.isNotEmpty())
+  require(tasks.isNotEmpty())
 
   // this first creates a [BpmnModelInstance] containing only the startEvent, then loops through all the tasks, and finally adds the endEvent.
   // return
   Bpmn.createExecutableProcess(processDefinitionKey)
     .name(processName)
+    .documentation(WorstDayProcess.DESCRIPTION)
     .camundaStartableInTasklist(false)
     .camundaVersionTag("${version}")
     .startEvent("startEvent").name("Started in good mood")

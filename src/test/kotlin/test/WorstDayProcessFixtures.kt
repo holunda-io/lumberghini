@@ -2,12 +2,23 @@ package io.holunda.funstuff.lumberghini.test
 
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.processDefinitionKey
+import io.holunda.funstuff.lumberghini.task.TaskDataConfiguration
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import java.time.LocalDate
 
 object WorstDayProcessFixtures {
 
-  val userName = "peter"
+  object TaskDataConfigurations {
+
+    val milton1 = TaskDataConfiguration(
+      name = "This is my task",
+      description = "Another intersting Job you must do",
+      colleague = TaskDataConfiguration.Colleague.Milton
+    )
+
+  }
+
+  const val userName = "peter"
 
   val day = LocalDate.parse("2020-11-16")
   val daySupplier = { LocalDate.parse("2020-11-16") }

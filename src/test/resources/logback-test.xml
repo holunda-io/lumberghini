@@ -19,4 +19,10 @@
   <logger name="org.camunda.bpm.engine.persistence" level="warn">
     <appender-ref ref="CONSOLE"/>
   </logger>
+  <logger name="org.springframework.test.context.support.AbstractContextLoader" level="warn">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="org.springframework.test.context.support.DefaultTestContextBootstrapper" level="warn">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
 </configuration>
