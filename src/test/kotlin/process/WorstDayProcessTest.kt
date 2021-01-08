@@ -94,15 +94,14 @@ class WorstDayProcessTest {
 
   @Test
   fun `task declaration`() {
-    val t1 = WorstDayTask("task-1", "T1", "ttt111")
+    val t1 = WorstDayTask(id = "task-1", name="T1", context="ttt111", description = "task 1")
       .withIndex(10)
 
     assertThat(t1.taskDefinitionKey).isEqualTo("task-1-010")
 
-    assertThat(WorstDayTask(
-      taskDefinitionKey = t1.taskDefinitionKey,
-      name = t1.name,
-      description = t1.description)
-    ).isEqualTo(t1)
+    assertThat(t1.id).isEqualTo("task-1")
+    assertThat(t1.name).isEqualTo("T1")
+    assertThat(t1.description).isEqualTo("task 1")
+
   }
 }
