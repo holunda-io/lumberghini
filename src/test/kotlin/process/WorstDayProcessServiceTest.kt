@@ -1,5 +1,7 @@
 package io.holunda.funstuff.lumberghini.process
 
+import io.holunda.funstuff.lumberghini.UserName
+import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.ELEMENTS
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.PREFIX
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess
 import io.holunda.funstuff.lumberghini.process.support.StarterProcess
@@ -50,7 +52,7 @@ class WorstDayProcessServiceTest {
 
   @Test
   fun `create, deploy and start process for user`() {
-    val processInstance = service.start(WorstDayProcessFixtures.userName)
+    val processInstance = startProcess(WorstDayProcessFixtures.userName)
 
     cAssertThat(processInstance).isActive.isWaitingAt("task1-000")
   }
@@ -94,8 +96,15 @@ class WorstDayProcessServiceTest {
     execute(job("serviceTask_start"))
     cAssertThat(starterInstance).isEnded
 
-    val processInstance: ProcessInstance = camunda.runtimeService.createProcessInstanceQuery().processDefinitionKey(WorstDayProcessFixtures.processDefinitionKey).singleResult()
+    val processInstance: ProcessInstance = startProcess(WorstDayProcessFixtures.userName)
     assertThat(processInstance).isNotNull
     cAssertThat(processInstance).isWaitingAt("task1-000")
+  }
+
+  private fun startProcess(userName:UserName): ProcessInstance {
+    val instance: ProcessInstance = service.start(userName)
+    cAssertThat(instance).isWaitingAt(ELEMENTS.EVENT_START)
+    execute(job(ELEMENTS.EVENT_START))
+    return instance
   }
 }

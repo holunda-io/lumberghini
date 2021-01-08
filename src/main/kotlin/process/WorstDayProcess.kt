@@ -1,8 +1,14 @@
 package io.holunda.funstuff.lumberghini.process
 
+import io.holunda.camunda.bpm.data.CamundaBpmData.stringVariable
+import io.holunda.camunda.bpm.data.factory.VariableFactory
+import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.ELEMENTS
+import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.VARIABLES
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import mu.KLogging
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.ExecutionListener
+import org.camunda.bpm.engine.delegate.ExecutionListener.EVENTNAME_END
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
 import org.camunda.bpm.model.bpmn.instance.FlowNode
@@ -18,6 +24,7 @@ private fun BpmnModelInstance.tasks(): List<WorstDayTask> = this.getModelElement
   .mapIndexed { index, task -> task.toWorstDayTask(index) }
   .sortedBy { it.index }
   .toList()
+
 
 private fun Task.toWorstDayTask(index: Int = -1) = WorstDayTask(
   id = this.id.substringBeforeLast("-"),
@@ -58,10 +65,20 @@ data class WorstDayProcess(
       "ever since I started working, every single day of my life has been worse than the day before it. " +
       "So, that means that every single day that you see me, that’s on the worst day of my life."
 
+    object VARIABLES {
+      val processInstanceId = stringVariable("processInstanceId")
+      val userName = stringVariable("userName")
+      val day = stringVariable("day")
+    }
+
+    object ELEMENTS {
+      const val EVENT_START = "startEvent"
+      const val EVENT_END = "endEvent"
+    }
     /**
      * A simple "2020116" date formatter.
      */
-    private val datePattern = DateTimeFormatter.ofPattern("yyyyMMdd")
+    val datePattern = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     /**
      * Parse a given [BpmnModelInstance] and create a [WorstDayProcess] from it.
@@ -157,10 +174,11 @@ fun createBpmnModelInstance(process: WorstDayProcess): BpmnModelInstance = with(
     .documentation(WorstDayProcess.DESCRIPTION)
     .camundaStartableInTasklist(false)
     .camundaVersionTag("${version}")
-    .startEvent("startEvent").name("Started in good mood")
+    .startEvent("startEvent").name("Started in good mood").camundaAsyncBefore()
+    .camundaExecutionListenerExpression(EVENTNAME_END, """#{execution.setVariable("${VARIABLES.processInstanceId.name}",execution.processInstanceId)}""")
     .done()
     .apply {
-      var lastElementId = "startEvent"
+      var lastElementId = ELEMENTS.EVENT_START
       tasks.forEach { task ->
         getModelElementById<FlowNode>(lastElementId).builder()
           .userTask(task.taskDefinitionKey)
@@ -172,8 +190,8 @@ fun createBpmnModelInstance(process: WorstDayProcess): BpmnModelInstance = with(
 
       getModelElementById<UserTask>(lastElementId).builder()
         .camundaAsyncAfter()
-        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_END, "#{worstDayProcessService.startMigrationListener()}")
-        .endEvent("endEvent").name("Reached Beer O'clock")
+        .camundaExecutionListenerDelegateExpression(EVENTNAME_END, "#{worstDayProcessService.startMigrationListener()}")
+        .endEvent(ELEMENTS.EVENT_END).name("Reached Beer O'clock")
         .camundaAsyncBefore()
         .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_START, "#{worstDayProcessService.throwLumberghInterventionListener()}")
         .camundaFailedJobRetryTimeCycle("R1/PT1M")

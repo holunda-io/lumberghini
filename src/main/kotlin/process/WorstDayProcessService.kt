@@ -1,7 +1,10 @@
 package io.holunda.funstuff.lumberghini.process
 
+import io.holunda.camunda.bpm.data.CamundaBpmData
 import io.holunda.funstuff.lumberghini.DelegateExpression
 import io.holunda.funstuff.lumberghini.UserName
+import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.VARIABLES
+import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.datePattern
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.startMigrationProcess
 import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
 import mu.KLogging
@@ -39,7 +42,13 @@ class WorstDayProcessService(
 
   fun start(userName: String): ProcessInstance {
     val process = findDeployedProcess(userName) ?: deploy(create(userName))
-    return runtimeService.findSingleInstance(process) ?: runtimeService.startProcessInstanceByKey(process.processDefinitionKey)
+    return runtimeService.findSingleInstance(process) ?: runtimeService.startProcessInstanceByKey(
+      process.processDefinitionKey,
+      CamundaBpmData.builder()
+        .set(VARIABLES.userName, process.userName)
+        .set(VARIABLES.day, process.day.format(datePattern))
+        .build()
+    )
   }
 
   fun create(userName: UserName) = WorstDayProcess(
