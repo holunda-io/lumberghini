@@ -36,3 +36,4 @@ _bak/
 *.trc
 javacore.*.txt
 jgiven-reports/
+.DS_Store
