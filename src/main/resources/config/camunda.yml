@@ -1,6 +1,14 @@
 camunda:
   bpm:
+    history-level: FULL
     admin-user:
       id: admin
     filter:
       create: All
+    metrics:
+      enabled: false
+      db-reporter-activate: false
+    generic-properties:
+      properties:
+        initializeTelemetry: false
+        telemetryReporterActivate: false

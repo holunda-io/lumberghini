@@ -1,22 +1,11 @@
 spring:
   application:
     name: lumberghini
-  datasource:
-    url: "jdbc:h2:mem:${spring.application.name}"
-    driverClassName: org.h2.Driver
-    username: "sa"
-    password: "sa"
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    generate-ddl: false
-    hibernate.ddl-auto: none
-    show-sql: false
-    open-in-view: true
   config:
     import:
-      - file:.config/tasks.yml
-      - file:.config/datasource.yml
-      - file:.config/camunda.yml
+      - classpath:config/datasource.yml
+      - classpath:config/tasks.yml
+      - classpath:config/camunda.yml
 
 server:
   port: ${PORT:8081}

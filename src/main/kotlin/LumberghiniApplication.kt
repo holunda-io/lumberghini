@@ -31,7 +31,7 @@ class LumberghiniApplication : CommandLineRunner {
   @Bean
   fun todaySupplier(): TodaySupplier = { LocalDate.now() }
 
-  @Bean
+//  @Bean
   fun disableTelemetry() = object : CamundaProcessEngineConfiguration {
     override fun preInit(processEngineConfiguration: ProcessEngineConfigurationImpl) = with(processEngineConfiguration) {
       isInitializeTelemetry = false
