@@ -46,7 +46,7 @@ class LumberghiniApplication : CommandLineRunner {
   }
 }
 
-@ConfigurationProperties(prefix = "application.lumberghini")
+@ConfigurationProperties(prefix = "lumberghini")
 @ConstructorBinding
 data class LumberghiniConfigurationProperties(
   val tasks: List<TaskDataConfiguration>
