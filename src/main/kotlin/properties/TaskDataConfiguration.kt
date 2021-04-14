@@ -24,9 +24,5 @@ data class TaskDataConfiguration(
     Michael,
     Dom
   }
-
-  val id = "task-${name.toLowerCase().replace(" ", "-")}"
-
-
-
 }
+

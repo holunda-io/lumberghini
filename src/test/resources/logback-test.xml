@@ -25,4 +25,16 @@
   <logger name="org.springframework.test.context.support.DefaultTestContextBootstrapper" level="warn">
     <appender-ref ref="CONSOLE"/>
   </logger>
+  <logger name="org.camunda.bpm.engine.cfg" level="warn">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="org.camunda.spin" level="warn">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="org.camunda.bpm.dmn.feel" level="warn">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="org.camunda.feel" level="warn">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
 </configuration>

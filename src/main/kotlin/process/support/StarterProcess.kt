@@ -9,6 +9,12 @@ import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.springframework.stereotype.Component
 
+/**
+ * This bean represents the starter process `processWorstDay-starter.bpmn`. This is the only process that can
+ * directly be started via the task list.
+ *
+ * It is responsible for generating and starting a personalized process instance of the worst day process.
+ */
 @Component(StarterProcess.NAME)
 class StarterProcess(
   private val runtimeService: RuntimeService

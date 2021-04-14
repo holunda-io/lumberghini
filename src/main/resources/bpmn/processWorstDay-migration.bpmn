@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_15hen38" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_15hen38" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:message id="Message_0ezwvko" name="message_start_migration" />
+  <bpmn:collaboration id="Collaboration_14n2u48">
+    <bpmn:participant id="Participant_07m96uj" name="Worst Day Migration Process" processRef="processWorstDay-migration" />
+  </bpmn:collaboration>
   <bpmn:process id="processWorstDay-migration" name="Migrate Process Instance" isExecutable="true" camunda:versionTag="2" camunda:isStartableInTasklist="false">
     <bpmn:documentation>Deploy the next process Definition and migrate the current instance.</bpmn:documentation>
-    <bpmn:endEvent id="end_migration" name="Migration completed">
-      <bpmn:incoming>Flow_0p4qkbb</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0p5x7h5" sourceRef="start_migration" targetRef="service_deployNextProcessVersion" />
-    <bpmn:sequenceFlow id="Flow_0xm13nj" sourceRef="service_deployNextProcessVersion" targetRef="service_migrateProcessInstance" />
     <bpmn:serviceTask id="service_deployNextProcessVersion" name="Deploy next version" camunda:asyncBefore="true" camunda:delegateExpression="${migrationProcess.deployNextProcessVersionDelegate()}">
       <bpmn:incoming>Flow_0p5x7h5</bpmn:incoming>
       <bpmn:outgoing>Flow_0xm13nj</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0vo6x7n" sourceRef="service_migrateProcessInstance" targetRef="service_moveTokenToUserTask" />
     <bpmn:serviceTask id="service_migrateProcessInstance" name="Migrate process instance" camunda:asyncBefore="true" camunda:delegateExpression="${migrationProcess.migrateProcessInstanceDelegate()}">
       <bpmn:incoming>Flow_0xm13nj</bpmn:incoming>
       <bpmn:outgoing>Flow_0vo6x7n</bpmn:outgoing>
@@ -24,71 +22,79 @@
       <bpmn:outgoing>Flow_0p5x7h5</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0o2i0t7" messageRef="Message_0ezwvko" />
     </bpmn:startEvent>
+    <bpmn:endEvent id="end_migration" name="Migration completed">
+      <bpmn:incoming>Flow_0p4qkbb</bpmn:incoming>
+    </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0p4qkbb" sourceRef="service_moveTokenToUserTask" targetRef="end_migration" />
+    <bpmn:sequenceFlow id="Flow_0vo6x7n" sourceRef="service_migrateProcessInstance" targetRef="service_moveTokenToUserTask" />
+    <bpmn:sequenceFlow id="Flow_0xm13nj" sourceRef="service_deployNextProcessVersion" targetRef="service_migrateProcessInstance" />
+    <bpmn:sequenceFlow id="Flow_0p5x7h5" sourceRef="start_migration" targetRef="service_deployNextProcessVersion" />
     <bpmn:textAnnotation id="TextAnnotation_0xayfr2">
       <bpmn:text>BusinessKey: processInstanceId
 Variable: sourceProcessDefinitionId</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_1j1vm3t" sourceRef="start_migration" targetRef="TextAnnotation_0xayfr2" />
     <bpmn:textAnnotation id="TextAnnotation_1dodubj">
       <bpmn:text>Variable: lastUserTaskKey
 Variable: deploymentId</bpmn:text>
     </bpmn:textAnnotation>
+    <bpmn:association id="Association_1j1vm3t" sourceRef="start_migration" targetRef="TextAnnotation_0xayfr2" />
     <bpmn:association id="Association_1h2urhy" sourceRef="service_deployNextProcessVersion" targetRef="TextAnnotation_1dodubj" />
   </bpmn:process>
-  <bpmn:message id="Message_0ezwvko" name="message_start_migration" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="processWorstDay-migration">
-      <bpmndi:BPMNEdge id="Flow_0vo6x7n_di" bpmnElement="Flow_0vo6x7n">
-        <di:waypoint x="510" y="207" />
-        <di:waypoint x="570" y="207" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0xm13nj_di" bpmnElement="Flow_0xm13nj">
-        <di:waypoint x="360" y="207" />
-        <di:waypoint x="410" y="207" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0p5x7h5_di" bpmnElement="Flow_0p5x7h5">
-        <di:waypoint x="215" y="207" />
-        <di:waypoint x="260" y="207" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0p4qkbb_di" bpmnElement="Flow_0p4qkbb">
-        <di:waypoint x="670" y="207" />
-        <di:waypoint x="732" y="207" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Activity_1okggbc_di" bpmnElement="service_deployNextProcessVersion">
-        <dc:Bounds x="260" y="167" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1c4jylr_di" bpmnElement="service_migrateProcessInstance">
-        <dc:Bounds x="410" y="167" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_16f9017_di" bpmnElement="service_moveTokenToUserTask">
-        <dc:Bounds x="570" y="167" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_17j8bay_di" bpmnElement="start_migration">
-        <dc:Bounds x="179" y="189" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="156" y="232" width="82" height="14" />
-        </bpmndi:BPMNLabel>
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_14n2u48">
+      <bpmndi:BPMNShape id="Participant_07m96uj_di" bpmnElement="Participant_07m96uj" isHorizontal="true">
+        <dc:Bounds x="153" y="60" width="700" height="290" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0xayfr2_di" bpmnElement="TextAnnotation_0xayfr2">
-        <dc:Bounds x="147" y="80" width="243" height="40" />
+        <dc:Bounds x="207" y="80" width="243" height="40" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1dodubj_di" bpmnElement="TextAnnotation_1dodubj">
-        <dc:Bounds x="260" y="290" width="199" height="40" />
+        <dc:Bounds x="320" y="290" width="199" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0p4qkbb_di" bpmnElement="Flow_0p4qkbb">
+        <di:waypoint x="730" y="207" />
+        <di:waypoint x="772" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vo6x7n_di" bpmnElement="Flow_0vo6x7n">
+        <di:waypoint x="570" y="207" />
+        <di:waypoint x="630" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xm13nj_di" bpmnElement="Flow_0xm13nj">
+        <di:waypoint x="420" y="207" />
+        <di:waypoint x="470" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p5x7h5_di" bpmnElement="Flow_0p5x7h5">
+        <di:waypoint x="275" y="207" />
+        <di:waypoint x="320" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1okggbc_di" bpmnElement="service_deployNextProcessVersion">
+        <dc:Bounds x="320" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1c4jylr_di" bpmnElement="service_migrateProcessInstance">
+        <dc:Bounds x="470" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16f9017_di" bpmnElement="service_moveTokenToUserTask">
+        <dc:Bounds x="630" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_17j8bay_di" bpmnElement="start_migration">
+        <dc:Bounds x="239" y="189" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="216" y="232" width="82" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0n8k0rk_di" bpmnElement="end_migration">
-        <dc:Bounds x="732" y="189" width="36" height="36" />
+        <dc:Bounds x="772" y="189" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="725" y="232" width="51" height="27" />
+          <dc:Bounds x="765" y="232" width="51" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1j1vm3t_di" bpmnElement="Association_1j1vm3t">
-        <di:waypoint x="197" y="189" />
-        <di:waypoint x="197" y="120" />
+        <di:waypoint x="257" y="189" />
+        <di:waypoint x="257" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1h2urhy_di" bpmnElement="Association_1h2urhy">
-        <di:waypoint x="310" y="247" />
-        <di:waypoint x="310" y="290" />
+        <di:waypoint x="370" y="247" />
+        <di:waypoint x="370" y="290" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

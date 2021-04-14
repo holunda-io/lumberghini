@@ -21,6 +21,6 @@ class FindNextTaskStrategyTest {
     val next = strategy.nextVersion(process)
 
     assertThat(next.version).isEqualTo(2)
-    assertThat(next.tasks.get(1).id).isEqualTo("task2")
+    assertThat(next.tasks.get(1).taskId.id).isEqualTo(2)
   }
 }

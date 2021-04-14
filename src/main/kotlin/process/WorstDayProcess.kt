@@ -1,37 +1,16 @@
 package io.holunda.funstuff.lumberghini.process
 
 import io.holunda.camunda.bpm.data.CamundaBpmData.stringVariable
-import io.holunda.camunda.bpm.data.factory.VariableFactory
-import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.ELEMENTS
-import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.VARIABLES
+import io.holunda.funstuff.lumberghini.process.fn.BpmnModelInstanceConverter.createBpmnModelInstance
+import io.holunda.funstuff.lumberghini.process.fn.BpmnModelInstanceConverter.processDefinitionKey
+import io.holunda.funstuff.lumberghini.process.fn.BpmnModelInstanceConverter.tasks
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import mu.KLogging
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.engine.delegate.ExecutionListener
-import org.camunda.bpm.engine.delegate.ExecutionListener.EVENTNAME_END
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
-import org.camunda.bpm.model.bpmn.instance.FlowNode
-import org.camunda.bpm.model.bpmn.instance.Process
-import org.camunda.bpm.model.bpmn.instance.Task
-import org.camunda.bpm.model.bpmn.instance.UserTask
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-
-private fun BpmnModelInstance.processDefinitionKey() = this.getModelElementsByType(Process::class.java).first().id
-private fun BpmnModelInstance.tasks(): List<WorstDayTask> = this.getModelElementsByType(Task::class.java)
-  .mapIndexed { index, task -> task.toWorstDayTask(index) }
-  .sortedBy { it.index }
-  .toList()
-
-
-private fun Task.toWorstDayTask(index: Int = -1) = WorstDayTask(
-  id = this.id.substringBeforeLast("-"),
-  name = this.name,
-  description = this.documentations.first().rawTextContent,
-  index = index
-)
+import kotlin.math.min
 
 /**
  * The lumbergh process, consisting of one..many useless user tasks.
@@ -75,10 +54,11 @@ data class WorstDayProcess(
       const val EVENT_START = "startEvent"
       const val EVENT_END = "endEvent"
     }
+
     /**
      * A simple "2020116" date formatter.
      */
-    val datePattern = DateTimeFormatter.ofPattern("yyyyMMdd")
+    val datePattern: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     /**
      * Parse a given [BpmnModelInstance] and create a [WorstDayProcess] from it.
@@ -110,7 +90,7 @@ data class WorstDayProcess(
   constructor(day: LocalDate, userName: String, task: WorstDayTask) : this(
     day = day,
     userName = userName,
-    tasks = listOf(task.withIndex(0))
+    tasks = listOf(task)
   )
 
   init {
@@ -118,9 +98,18 @@ data class WorstDayProcess(
   }
 
   /**
-   * This process version, based on numer of UserTasks already added.
+   * This process version, based on number of UserTasks already added.
    */
   val version = tasks.size
+
+  /**
+   * Highest [TaskId#count] of task with given Id.
+   * Used to create the taskId of a task to be added.
+   */
+  fun maxTaskCount(id: Int) = tasks.filter { it.taskId.id == id }
+    .map { it.taskId.count }
+    .maxByOrNull { it }
+    ?: 0
 
   /**
    * This process' definition key, based on userName and day.
@@ -153,48 +142,10 @@ data class WorstDayProcess(
 
   /**
    * Creates a copy of this instances with the newTask added.
-   * Index of the newTask is set to the position in the list,
-   * the process version is equal to the list size.
    */
-  fun addTask(newTask: WorstDayTask): WorstDayProcess = copy(
-    tasks = (tasks + newTask)
-      .mapIndexed { index, task -> task.withIndex(index) }
-      .toList()
+  fun addTask(newTask: WorstDayTask) = copy(
+    tasks = (tasks + newTask.withCount(maxTaskCount(newTask.taskId.id) + 1))
   )
+
 }
 
-
-fun createBpmnModelInstance(process: WorstDayProcess): BpmnModelInstance = with(process) {
-  require(tasks.isNotEmpty())
-
-  // this first creates a [BpmnModelInstance] containing only the startEvent, then loops through all the tasks, and finally adds the endEvent.
-  // return
-  Bpmn.createExecutableProcess(processDefinitionKey)
-    .name(processName)
-    .documentation(WorstDayProcess.DESCRIPTION)
-    .camundaStartableInTasklist(false)
-    .camundaVersionTag("${version}")
-    .startEvent("startEvent").name("Started in good mood").camundaAsyncBefore()
-    .camundaExecutionListenerExpression(EVENTNAME_END, """#{execution.setVariable("${VARIABLES.processInstanceId.name}",execution.processInstanceId)}""")
-    .done()
-    .apply {
-      var lastElementId = ELEMENTS.EVENT_START
-      tasks.forEach { task ->
-        getModelElementById<FlowNode>(lastElementId).builder()
-          .userTask(task.taskDefinitionKey)
-          .name(task.name)
-          .documentation(task.description)
-        // update the lastUserTask id for the next iteration
-        lastElementId = task.taskDefinitionKey
-      }
-
-      getModelElementById<UserTask>(lastElementId).builder()
-        .camundaAsyncAfter()
-        .camundaExecutionListenerDelegateExpression(EVENTNAME_END, "#{worstDayProcessService.startMigrationListener()}")
-        .endEvent(ELEMENTS.EVENT_END).name("Reached Beer O'clock")
-        .camundaAsyncBefore()
-        .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_START, "#{worstDayProcessService.throwLumberghInterventionListener()}")
-        .camundaFailedJobRetryTimeCycle("R1/PT1M")
-        .done()
-    }
-}

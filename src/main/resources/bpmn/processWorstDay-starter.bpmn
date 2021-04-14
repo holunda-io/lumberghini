@@ -1,7 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" id="definitions_61603050-6eb7-4980-bc3c-740915e73d2a" targetNamespace="http://www.omg.org/spec/BPMN/20100524/MODEL" exporter="Camunda Modeler" exporterVersion="4.4.0">
+<definitions xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" id="definitions_61603050-6eb7-4980-bc3c-740915e73d2a" targetNamespace="http://www.omg.org/spec/BPMN/20100524/MODEL" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <collaboration id="Collaboration_0omja34">
+    <participant id="Participant_1cmb45d" name="Worst Day Starter Process" processRef="processWorstDay-starter" />
+    <participant id="Participant_1g1z1h2" name="Personalized Worst Day Process" />
+    <messageFlow id="Flow_0082ujf" name="Starts new instance" sourceRef="serviceTask_start" targetRef="Participant_1g1z1h2" />
+  </collaboration>
   <process id="processWorstDay-starter" name="Worst Day in the life of ... " isExecutable="true" camunda:versionTag="1">
     <documentation>Generate, deploy and start the worstDayProcess for given userName.</documentation>
+    <sequenceFlow id="Flow_0l30jxc" sourceRef="serviceTask_deploy" targetRef="serviceTask_start" />
+    <sequenceFlow id="sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59" sourceRef="serviceTask_start" targetRef="endEvent" />
+    <sequenceFlow id="sequenceFlow_c4190e10-5013-4df0-b812-0b32be61269c" sourceRef="startEvent" targetRef="serviceTask_deploy" />
+    <endEvent id="endEvent" name="Process started">
+      <incoming>sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59</incoming>
+    </endEvent>
+    <serviceTask id="serviceTask_deploy" name="Generate and deploy Process" camunda:asyncBefore="true" camunda:expression="${worstDayProcessService.createAndDeploy(userName)}">
+      <incoming>sequenceFlow_c4190e10-5013-4df0-b812-0b32be61269c</incoming>
+      <outgoing>Flow_0l30jxc</outgoing>
+      <dataOutputAssociation id="DataOutputAssociation_06g7gtg">
+        <targetRef>DataStoreReference_0gdyfg5</targetRef>
+      </dataOutputAssociation>
+    </serviceTask>
+    <serviceTask id="serviceTask_start" name="Start the Worst Day Process" camunda:asyncBefore="true" camunda:expression="${worstDayProcessService.start(userName)}">
+      <incoming>Flow_0l30jxc</incoming>
+      <outgoing>sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59</outgoing>
+      <property id="Property_1rxs8lr" name="__targetRef_placeholder" />
+      <dataInputAssociation id="DataInputAssociation_0gwc3su">
+        <sourceRef>DataStoreReference_0gdyfg5</sourceRef>
+        <targetRef>Property_1rxs8lr</targetRef>
+      </dataInputAssociation>
+    </serviceTask>
+    <dataStoreReference id="DataStoreReference_0gdyfg5" name="Process Repository" />
     <startEvent id="startEvent" name="Start requested">
       <extensionElements>
         <camunda:formData>
@@ -14,68 +42,79 @@
         </camunda:formData>
       </extensionElements>
       <outgoing>sequenceFlow_c4190e10-5013-4df0-b812-0b32be61269c</outgoing>
-      <dataOutputAssociation id="DataOutputAssociation_12rkcfc">
-        <targetRef>DataObjectReference_19lr4c3</targetRef>
-      </dataOutputAssociation>
     </startEvent>
-    <sequenceFlow id="sequenceFlow_c4190e10-5013-4df0-b812-0b32be61269c" sourceRef="startEvent" targetRef="serviceTask_deploy" />
-    <sequenceFlow id="sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59" sourceRef="serviceTask_start" targetRef="endEvent" />
-    <endEvent id="endEvent" name="Process started">
-      <incoming>sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59</incoming>
-    </endEvent>
-    <serviceTask id="serviceTask_start" name="Start the Worst Day Process" camunda:asyncBefore="true" camunda:expression="${worstDayProcessService.start(userName)}">
-      <incoming>Flow_0l30jxc</incoming>
-      <outgoing>sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59</outgoing>
-    </serviceTask>
-    <dataObjectReference id="DataObjectReference_19lr4c3" name="UserName" dataObjectRef="DataObject_1y3b923" />
-    <dataObject id="DataObject_1y3b923" />
-    <sequenceFlow id="Flow_0l30jxc" sourceRef="serviceTask_deploy" targetRef="serviceTask_start" />
-    <serviceTask id="serviceTask_deploy" name="Generate and deploy Process" camunda:asyncBefore="true" camunda:expression="${worstDayProcessService.createAndDeploy(userName)}">
-      <incoming>sequenceFlow_c4190e10-5013-4df0-b812-0b32be61269c</incoming>
-      <outgoing>Flow_0l30jxc</outgoing>
-    </serviceTask>
+    <textAnnotation id="TextAnnotation_0qzf89c">
+      <text>Starts with 
+- UserName
+- currentDate</text>
+    </textAnnotation>
+    <association id="Association_0p8q0xr" sourceRef="startEvent" targetRef="TextAnnotation_0qzf89c" />
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_e2def008-687b-4878-aa14-eafa93b7e72b">
-    <bpmndi:BPMNPlane id="BPMNPlane_30583a27-7391-4f21-bcb2-f5d65bfb7975" bpmnElement="processWorstDay-starter">
+    <bpmndi:BPMNPlane id="BPMNPlane_30583a27-7391-4f21-bcb2-f5d65bfb7975" bpmnElement="Collaboration_0omja34">
+      <bpmndi:BPMNShape id="Participant_1cmb45d_di" bpmnElement="Participant_1cmb45d" isHorizontal="true">
+        <dc:Bounds x="130" y="58" width="850" height="282" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0qzf89c_di" bpmnElement="TextAnnotation_0qzf89c">
+        <dc:Bounds x="260" y="90" width="100" height="54" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0l30jxc_di" bpmnElement="Flow_0l30jxc">
-        <di:waypoint x="370" y="118" />
-        <di:waypoint x="430" y="118" />
+        <di:waypoint x="470" y="190" />
+        <di:waypoint x="630" y="190" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_ebe6c04e-783a-4945-a744-78019b390416" bpmnElement="sequenceFlow_0ba5906d-dfe3-490b-a3f5-10b70b4a6d59">
-        <di:waypoint x="530" y="118" />
-        <di:waypoint x="592" y="118" />
+        <di:waypoint x="730" y="190" />
+        <di:waypoint x="872" y="190" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_6fd9133d-0c76-4760-8c1e-10e8e17c0908" bpmnElement="sequenceFlow_c4190e10-5013-4df0-b812-0b32be61269c">
-        <di:waypoint x="216" y="118" />
-        <di:waypoint x="270" y="118" />
+        <di:waypoint x="258" y="190" />
+        <di:waypoint x="370" y="190" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BPMNShape_a3a73695-f2f6-4b32-a457-db882f943919" bpmnElement="startEvent">
-        <dc:Bounds x="180" y="100" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="160" y="76" width="76" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_465cf041-0f90-4a02-bb67-e7479414bfa8" bpmnElement="endEvent">
-        <dc:Bounds x="592" y="100" width="36" height="36" />
+        <dc:Bounds x="872" y="172" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="572" y="136" width="77" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0itk0wq_di" bpmnElement="serviceTask_start">
-        <dc:Bounds x="430" y="78" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="DataObjectReference_19lr4c3_di" bpmnElement="DataObjectReference_19lr4c3">
-        <dc:Bounds x="180" y="225" width="36" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="172" y="282" width="53" height="14" />
+          <dc:Bounds x="852" y="208" width="77" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1mf798e_di" bpmnElement="serviceTask_deploy">
-        <dc:Bounds x="270" y="78" width="100" height="80" />
+        <dc:Bounds x="370" y="150" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="DataOutputAssociation_12rkcfc_di" bpmnElement="DataOutputAssociation_12rkcfc">
-        <di:waypoint x="198" y="136" />
-        <di:waypoint x="200" y="225" />
+      <bpmndi:BPMNShape id="Activity_0itk0wq_di" bpmnElement="serviceTask_start">
+        <dc:Bounds x="630" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_a3a73695-f2f6-4b32-a457-db882f943919" bpmnElement="startEvent">
+        <dc:Bounds x="222" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="202" y="223" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0p8q0xr_di" bpmnElement="Association_0p8q0xr">
+        <di:waypoint x="251" y="176" />
+        <di:waypoint x="278" y="144" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_03nqmgd_di" bpmnElement="Participant_1g1z1h2" isHorizontal="true">
+        <dc:Bounds x="610" y="420" width="370" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_0gdyfg5_di" bpmnElement="DataStoreReference_0gdyfg5">
+        <dc:Bounds x="395" y="415" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="394" y="472" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_06g7gtg_di" bpmnElement="DataOutputAssociation_06g7gtg">
+        <di:waypoint x="420" y="230" />
+        <di:waypoint x="420" y="415" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0gwc3su_di" bpmnElement="DataInputAssociation_0gwc3su">
+        <di:waypoint x="443" y="415" />
+        <di:waypoint x="630" y="214" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0082ujf_di" bpmnElement="Flow_0082ujf">
+        <di:waypoint x="680" y="230" />
+        <di:waypoint x="680" y="420" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="694" y="276" width="52" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

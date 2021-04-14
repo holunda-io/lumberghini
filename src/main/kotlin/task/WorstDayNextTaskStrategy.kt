@@ -1,6 +1,6 @@
 package io.holunda.funstuff.lumberghini.task
 
-import io.holunda.funstuff.lumberghini.LumberghiniConfigurationProperties
+import io.holunda.funstuff.lumberghini.properties.LumberghiniConfigurationProperties
 import org.springframework.stereotype.Component
 
 @Component

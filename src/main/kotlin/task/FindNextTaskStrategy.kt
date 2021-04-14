@@ -1,6 +1,7 @@
 package io.holunda.funstuff.lumberghini.task
 
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess
+import io.holunda.funstuff.lumberghini.properties.TaskId
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -15,7 +16,7 @@ interface FindNextTaskStrategy {
       private val count = AtomicInteger(1)
       override fun next(previousTasks: List<WorstDayTask>): WorstDayTask {
         val index = count.getAndIncrement()
-        return WorstDayTask(id = "task$index", name = "Task $index", description = "this is task number $index")
+        return WorstDayTask(taskId = TaskId(id = index), name = "Task $index", description = "this is task number $index")
       }
     }
   }

@@ -6,12 +6,15 @@ import io.holunda.funstuff.lumberghini.process.support.MigrationProcess
 import io.holunda.funstuff.lumberghini.process.support.StarterProcess
 import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
 import org.camunda.bpm.engine.*
+import org.camunda.bpm.engine.impl.cfg.AbstractProcessEnginePlugin
+import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl
 import org.camunda.bpm.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration
 import org.camunda.bpm.engine.impl.history.HistoryLevel
 import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.test.ProcessEngineRule
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests
 import org.camunda.bpm.engine.test.mock.MockExpressionManager
+import org.camunda.spin.plugin.impl.SpinProcessEnginePlugin
 
 class WorstDayProcessTestContext(
   private val configuration: StandaloneInMemProcessEngineConfiguration.() -> Unit = { }
@@ -29,6 +32,7 @@ class WorstDayProcessTestContext(
       isDbMetricsReporterActivate = false
       isTelemetryReporterActivate = false
       isInitializeTelemetry = false
+      processEnginePlugins.add(SpinProcessEnginePlugin())
       this.configuration()
     }
   }

@@ -54,7 +54,9 @@ class WorstDayProcessServiceTest {
   fun `create, deploy and start process for user`() {
     val processInstance = startProcess(WorstDayProcessFixtures.userName)
 
-    cAssertThat(processInstance).isActive.isWaitingAt("task1-000")
+
+
+    cAssertThat(processInstance).isActive.isWaitingAt("task-001-01")
   }
 
   @Test
@@ -75,7 +77,7 @@ class WorstDayProcessServiceTest {
   fun `create process for peter`() {
     val process = service.create(WorstDayProcessFixtures.userName)
     assertThat(process.version).isEqualTo(1)
-    assertThat(process.tasks.first().id).isEqualTo("task1")
+    assertThat(process.tasks.first().taskId.id).isEqualTo(1)
     assertThat(process.processResourceName).isEqualTo("processWorstDay-peter-20201116.bpmn")
     assertThat(process.processDefinitionId).isNull()
   }
@@ -98,7 +100,7 @@ class WorstDayProcessServiceTest {
 
     val processInstance: ProcessInstance = startProcess(WorstDayProcessFixtures.userName)
     assertThat(processInstance).isNotNull
-    cAssertThat(processInstance).isWaitingAt("task1-000")
+    cAssertThat(processInstance).isWaitingAt("task-001-01")
   }
 
   private fun startProcess(userName:UserName): ProcessInstance {

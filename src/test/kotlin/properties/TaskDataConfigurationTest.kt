@@ -1,5 +1,6 @@
-package io.holunda.funstuff.lumberghini.task
+package io.holunda.funstuff.lumberghini.properties
 
+import io.holunda.funstuff.lumberghini.task.TaskDataConfiguration
 import io.holunda.funstuff.lumberghini.task.TaskDataConfiguration.Colleague
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures
 import org.assertj.core.api.Assertions.assertThat
@@ -11,8 +12,8 @@ internal class TaskDataConfigurationTest {
 
   @Test
   internal fun `convert to worstDayTask`() {
-    assertThat(WorstDayProcessFixtures.TaskDataConfigurations.milton1.id)
-      .isEqualTo("task-this-is-my-task")
+    assertThat(WorstDayProcessFixtures.TaskDataConfigurations.milton1.colleague)
+      .isEqualTo(Colleague.Milton)
   }
 
   @Test
