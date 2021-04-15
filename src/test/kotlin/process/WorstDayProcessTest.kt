@@ -4,6 +4,7 @@ import io.holunda.funstuff.lumberghini.properties.TaskId
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.processWithTasks
+import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.setCount
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.camunda.bpm.model.bpmn.Bpmn
@@ -66,8 +67,8 @@ class WorstDayProcessTest {
     assertThat(process.version).isEqualTo(2)
 
     assertThat(process.tasks).containsExactly(
-      WorstDayProcessFixtures.task2.copy(taskId = WorstDayProcessFixtures.task2.taskId.copy(count = 1)),
-      WorstDayProcessFixtures.task1.copy(taskId = WorstDayProcessFixtures.task1.taskId.copy(count = 1)),
+      WorstDayProcessFixtures.task2.setCount(1),
+      WorstDayProcessFixtures.task1.setCount(1),
     )
 
     // read modified process
@@ -75,11 +76,11 @@ class WorstDayProcessTest {
     assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter-20201116")
     assertThat(process.version).isEqualTo(2)
     assertThat(process.tasks).containsExactlyInAnyOrder(
-      WorstDayProcessFixtures.task2.withCount(1),
-      WorstDayProcessFixtures.task1.withCount(1)
+      WorstDayProcessFixtures.task2.setCount(1),
+      WorstDayProcessFixtures.task1.setCount(1)
     )
 
-    println(process.bpmnXml)
+    //println(process.bpmnXml)
   }
 
   @Test

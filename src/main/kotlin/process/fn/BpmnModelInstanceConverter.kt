@@ -20,7 +20,7 @@ object BpmnModelInstanceConverter {
     .map { it.toWorstDayTask() }
     .sortedBy { it.taskId.id }
 
-  fun Task.toWorstDayTask() = WorstDayTask(
+  private fun Task.toWorstDayTask() = WorstDayTask(
     taskId = TaskId.from(this.id),
     name = this.name,
     description = this.documentations.first().rawTextContent

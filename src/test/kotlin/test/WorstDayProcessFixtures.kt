@@ -51,4 +51,7 @@ object WorstDayProcessFixtures {
     userName = userName,
     tasks = tasks.toList()
   )
+
+  fun WorstDayTask.setCount(count:Int) = copy(taskId = this.taskId.copy(count = count))
+
 }
