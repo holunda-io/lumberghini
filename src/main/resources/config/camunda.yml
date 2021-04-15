@@ -1,5 +1,10 @@
 camunda.bpm:
   history-level: FULL
+  default-serialization-format: application/json
+  webapp:
+    index-redirect-enabled: false
+    application-path: "/"
+  id-generator: strong
   admin-user:
     id: admin
   filter:
