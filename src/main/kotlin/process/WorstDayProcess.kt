@@ -66,7 +66,7 @@ data class WorstDayProcess(
      */
     fun readFromModelInstance(bpmn: BpmnModelInstance, definitionId: String? = null): WorstDayProcess {
       // parse userName and day from processDefinitionKey
-      val (_, userName, day) = bpmn.processDefinitionKey().split("-")
+      val (_, userName, day) = bpmn.processDefinitionKey().split("-", limit = 3)
 
       val tasks = bpmn.tasks()
 
@@ -83,15 +83,6 @@ data class WorstDayProcess(
      */
     fun processDefinitionKey(userName: String, day: LocalDate) = "$PREFIX-$userName-${day.format(datePattern)}"
   }
-
-  /**
-   * Creates a new process instance containing only one UserTask.
-   */
-  constructor(day: LocalDate, userName: String, task: WorstDayTask) : this(
-    day = day,
-    userName = userName,
-    tasks = listOf(task)
-  )
 
   init {
     require(tasks.isNotEmpty()) { "the process needs at least one user task!" }

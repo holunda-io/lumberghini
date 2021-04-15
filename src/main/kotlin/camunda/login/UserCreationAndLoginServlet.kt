@@ -27,16 +27,21 @@ class UserCreationAndLoginServlet(private val identityService: IdentityService) 
     return try {
       if (identityService.createUserQuery().userId(userId).count() == 0L) {
         logger.info { "User created: '$userId'" }
-        val user = identityService.newUser(userId)
-        user.firstName = newUserModel.firstName
-        user.lastName = newUserModel.lastName
+        val user = identityService.newUser(userId).apply {
+          firstName = newUserModel.firstName
+          lastName = newUserModel.lastName
+        }
+
         identityService.saveUser(user)
       }
       logger.info { "Cleared authentication" }
+
       Authentications.clearCurrent()
-      val authentications = Authentications()
-      authentications.addAuthentication(authenticationService.createAuthenticate("default", userId))
-      Authentications.updateSession(session, authentications)
+      Authentications().apply {
+        addAuthentication(authenticationService.createAuthenticate("default", userId))
+        Authentications.updateSession(session, this)
+      }
+
       logger.info("User '$userId' is now logged in.")
       // redirect to welcome
       ModelAndView("redirect:/app/welcome/default/")

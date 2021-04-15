@@ -3,10 +3,11 @@ package io.holunda.funstuff.lumberghini.process.support
 import io.holunda.camunda.bpm.data.CamundaBpmData
 import io.holunda.camunda.bpm.data.CamundaBpmData.stringVariable
 import io.holunda.camunda.bpm.data.factory.VariableFactory
-import io.holunda.funstuff.lumberghini.DelegateExpression
 import io.holunda.funstuff.lumberghini.DeploymentId
 import io.holunda.funstuff.lumberghini.ProcessDefinitionId
 import io.holunda.funstuff.lumberghini.ProcessInstanceId
+import io.holunda.funstuff.lumberghini.camunda.CamundaExtensions.DelegateExpression
+import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.ELEMENTS.EVENT_END
 import io.holunda.funstuff.lumberghini.process.WorstDayProcessDefinitionRepository
 import io.holunda.funstuff.lumberghini.process.WorstDayProcessService
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.VARIABLES.DEPLOYMENT_ID
@@ -19,7 +20,6 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.springframework.stereotype.Component
-
 
 /**
  * This process is responsible for generating and deploying the next processDefinition
@@ -119,7 +119,7 @@ class MigrationProcess(
   fun moveTokenToUserTaskDelegate() = JavaDelegate {
     runtimeService.createProcessInstanceModification(it.variableProcessInstanceId)
       .startBeforeActivity(it.variableLastUserTaskKey)
-      .cancelAllForActivity("endEvent")
+      .cancelAllForActivity(EVENT_END)
       .execute()
   }
 }

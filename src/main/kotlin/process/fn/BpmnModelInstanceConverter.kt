@@ -2,6 +2,7 @@ package io.holunda.funstuff.lumberghini.process.fn
 
 import io.holunda.funstuff.lumberghini.ProcessDefinitionId
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess
+import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.ELEMENTS.EVENT_START
 import io.holunda.funstuff.lumberghini.properties.TaskId
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import org.camunda.bpm.engine.delegate.ExecutionListener
@@ -26,7 +27,6 @@ object BpmnModelInstanceConverter {
     description = this.documentations.first().rawTextContent
   )
 
-
   fun createBpmnModelInstance(process: WorstDayProcess): BpmnModelInstance = with(process) {
     require(tasks.isNotEmpty())
 
@@ -36,7 +36,7 @@ object BpmnModelInstanceConverter {
       .documentation(WorstDayProcess.DESCRIPTION)
       .camundaStartableInTasklist(false)
       .camundaVersionTag("${version}")
-      .startEvent("startEvent").name("Started in good mood").camundaAsyncBefore()
+      .startEvent(EVENT_START).name("Started in good mood").camundaAsyncBefore()
       .documentation("documentation")
       .camundaExecutionListenerExpression(
         ExecutionListener.EVENTNAME_END,
@@ -44,7 +44,7 @@ object BpmnModelInstanceConverter {
       )
       .done()
       .apply {
-        var lastElementId = WorstDayProcess.Companion.ELEMENTS.EVENT_START
+        var lastElementId = EVENT_START
         tasks.forEach { task ->
           getModelElementById<FlowNode>(lastElementId).builder()
             .userTask(task.taskDefinitionKey)

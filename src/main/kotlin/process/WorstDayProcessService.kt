@@ -1,8 +1,8 @@
 package io.holunda.funstuff.lumberghini.process
 
 import io.holunda.camunda.bpm.data.CamundaBpmData
-import io.holunda.funstuff.lumberghini.DelegateExpression
 import io.holunda.funstuff.lumberghini.UserName
+import io.holunda.funstuff.lumberghini.camunda.CamundaExtensions.DelegateExpression
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.VARIABLES
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.datePattern
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.startMigrationProcess
@@ -38,7 +38,7 @@ class WorstDayProcessService(
   }
 
   @DelegateExpression
-  fun throwLumberghInterventionListener()  = LumberghInterventionException.throwExceptionListener()
+  fun throwLumberghInterventionListener() = LumberghInterventionException.throwExceptionListener()
 
   fun start(userName: String): ProcessInstance {
     val process = findDeployedProcess(userName) ?: deploy(create(userName))
@@ -54,7 +54,7 @@ class WorstDayProcessService(
   fun create(userName: UserName) = WorstDayProcess(
     day = todaySupplier(),
     userName = userName,
-    task = findNextTaskStrategy.next()
+    tasks = listOf(findNextTaskStrategy.next())
   )
 
   fun createNext(process: WorstDayProcess): WorstDayProcess = findNextTaskStrategy.nextVersion(process)

@@ -29,11 +29,7 @@ class WorstDayProcessTest {
 
   @Test
   fun `create with single task`() {
-    val process = WorstDayProcess(
-      day = WorstDayProcessFixtures.day,
-      userName = WorstDayProcessFixtures.userName,
-      task = WorstDayProcessFixtures.task1.withCount(10)
-    )
+    val process = WorstDayProcessFixtures.processWithTasks(WorstDayProcessFixtures.task1.setCount(10))
 
     Bpmn.validateModel(process.bpmnModelInstance)
     assertThat(process.tasks).hasSize(1)
