@@ -14,7 +14,7 @@ data class TaskId(val prefix: String = "task", val id: Int, val count: Int = 1) 
       TaskId(it[0], it[1].toInt(), it[2].toInt())
     }
 
-    private fun Int.padStart(length: Int = 3, char: Char = '0') = toString().padStart(length, '0')
+    private fun Int.padStart(length: Int = 3, char: Char = '0') = toString().padStart(length, char)
   }
 
   val taskDefinitionKey: TaskDefinitionKey = "$prefix-${id.padStart()}-${count.padStart(length = 2)}"
@@ -22,7 +22,7 @@ data class TaskId(val prefix: String = "task", val id: Int, val count: Int = 1) 
   fun withCount(count: Int): TaskId = if (count == this.count) {
     this
   } else {
-    require(count > this.count ?: 1) { "new count=$count has to be higher than last=${this.count}" }
+    require(count > this.count) { "new count=$count has to be higher than last=${this.count}" }
     copy(count = count)
   }
 }

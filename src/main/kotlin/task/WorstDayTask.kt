@@ -37,5 +37,5 @@ data class WorstDayTask(
   val count = taskId.count
 
   fun withCount(count: Int) = copy(taskId = taskId.withCount(count))
-  fun increaseCount() = copy(taskId = taskId.withCount((taskId.count ?: 1) + 1))
+  fun increaseCount() = copy(taskId = taskId.withCount(taskId.count + 1))
 }
