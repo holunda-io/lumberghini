@@ -5,6 +5,7 @@ import io.holunda.funstuff.lumberghini.process.WorstDayProcess
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.ELEMENTS.EVENT_START
 import io.holunda.funstuff.lumberghini.properties.TaskId
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
+import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import org.camunda.bpm.engine.delegate.ExecutionListener
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
@@ -17,9 +18,12 @@ object BpmnModelInstanceConverter {
 
   fun BpmnModelInstance.processDefinitionKey(): ProcessDefinitionId = this.getModelElementsByType(Process::class.java).first().id
 
-  fun BpmnModelInstance.tasks(): List<WorstDayTask> = this.getModelElementsByType(Task::class.java)
+  /**
+   * Analyse the given [BpmnModelInstance] and extract the existing [WorstDayTasks].
+   */
+  fun BpmnModelInstance.tasks(): WorstDayTasks = this.getModelElementsByType(Task::class.java)
     .map { it.toWorstDayTask() }
-    .sortedBy { it.taskId.id }
+    .let { WorstDayTasks(it) }
 
   private fun Task.toWorstDayTask() = WorstDayTask(
     taskId = TaskId.from(this.id),

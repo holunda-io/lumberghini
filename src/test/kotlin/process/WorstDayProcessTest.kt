@@ -2,6 +2,7 @@ package io.holunda.funstuff.lumberghini.process
 
 import io.holunda.funstuff.lumberghini.properties.TaskId
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
+import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.processWithTasks
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.setCount
@@ -14,9 +15,9 @@ class WorstDayProcessTest {
 
   @Test
   fun `fail with empty task list`() {
-    assertThatThrownBy { WorstDayProcess(day = WorstDayProcessFixtures.day, userName = WorstDayProcessFixtures.userName, tasks = emptyList()) }
+    assertThatThrownBy { WorstDayProcess(day = WorstDayProcessFixtures.day, userName = WorstDayProcessFixtures.userName, tasks = WorstDayTasks(emptyList())) }
       .isInstanceOf(IllegalArgumentException::class.java)
-      .hasMessage("the process needs at least one user task!")
+      .hasMessage("worst day tasks must not be empty.")
   }
 
   @Test

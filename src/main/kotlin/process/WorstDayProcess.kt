@@ -5,12 +5,12 @@ import io.holunda.funstuff.lumberghini.process.fn.BpmnModelInstanceConverter.cre
 import io.holunda.funstuff.lumberghini.process.fn.BpmnModelInstanceConverter.processDefinitionKey
 import io.holunda.funstuff.lumberghini.process.fn.BpmnModelInstanceConverter.tasks
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
+import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import mu.KLogging
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.math.min
 
 /**
  * The lumbergh process, consisting of one..many useless user tasks.
@@ -31,7 +31,7 @@ data class WorstDayProcess(
   /**
    * What are the tasks you have to fulfill?
    */
-  val tasks: List<WorstDayTask>,
+  val tasks: WorstDayTasks,
 
   /**
    * The processDefinitionId this process gets, once it was deployed.
@@ -97,10 +97,7 @@ data class WorstDayProcess(
    * Highest [TaskId#count] of task with given Id.
    * Used to create the taskId of a task to be added.
    */
-  fun maxTaskCount(id: Int) = tasks.filter { it.taskId.id == id }
-    .map { it.taskId.count }
-    .maxByOrNull { it }
-    ?: 0
+  fun maxTaskCount(id: Int) = tasks.maxTaskCount(id)
 
   /**
    * This process' definition key, based on userName and day.
@@ -134,9 +131,7 @@ data class WorstDayProcess(
   /**
    * Creates a copy of this instances with the newTask added.
    */
-  fun addTask(newTask: WorstDayTask) = copy(
-    tasks = (tasks + newTask.withCount(maxTaskCount(newTask.taskId.id) + 1))
-  )
+  fun addTask(newTask: WorstDayTask): WorstDayProcess = copy(tasks = tasks.add(newTask))
 
 }
 

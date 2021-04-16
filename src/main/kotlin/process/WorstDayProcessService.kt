@@ -7,6 +7,7 @@ import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.VARIABL
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.datePattern
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.startMigrationProcess
 import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
+import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import mu.KLogging
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.ExecutionListener
@@ -54,7 +55,7 @@ class WorstDayProcessService(
   fun create(userName: UserName) = WorstDayProcess(
     day = todaySupplier(),
     userName = userName,
-    tasks = listOf(findNextTaskStrategy.next())
+    tasks = WorstDayTasks(findNextTaskStrategy.first())
   )
 
   fun createNext(process: WorstDayProcess): WorstDayProcess = findNextTaskStrategy.nextVersion(process)

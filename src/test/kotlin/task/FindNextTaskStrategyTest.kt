@@ -12,7 +12,7 @@ class FindNextTaskStrategyTest {
   private val process = WorstDayProcess(
     day = WorstDayProcessFixtures.day,
     userName = WorstDayProcessFixtures.userName,
-    tasks = listOf(strategy.next())
+    tasks = WorstDayTasks(strategy.first())
   )
 
   @Test

@@ -3,6 +3,9 @@ package io.holunda.funstuff.lumberghini.task
 import org.valiktor.functions.hasSize
 import org.valiktor.validate
 
+/**
+ * Task data read from `config/tasks.yml`
+ */
 data class TaskDataConfiguration(
   val name: String,
   val description: String,
@@ -25,4 +28,3 @@ data class TaskDataConfiguration(
     Dom
   }
 }
-

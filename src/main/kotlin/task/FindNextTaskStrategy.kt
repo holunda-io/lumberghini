@@ -12,14 +12,22 @@ interface FindNextTaskStrategy {
     /**
      * A default fallback strategy that just keeps adding numerated tasks. Might be moved to test-scope.
      */
+    // TODO move to Test Fixtures
     fun countingNextTaskStrategy() = object : FindNextTaskStrategy {
       private val count = AtomicInteger(1)
-      override fun next(previousTasks: List<WorstDayTask>): WorstDayTask {
-        val index = count.getAndIncrement()
-        return WorstDayTask(taskId = TaskId(id = index), name = "Task $index", description = "this is task number $index")
-      }
+
+      override fun first(): WorstDayTask = task(count.getAndIncrement())
+
+      override fun next(previousTasks: WorstDayTasks): WorstDayTask = task(count.getAndIncrement())
+
+      private fun task(index: Int) = WorstDayTask(taskId = TaskId(id = index), name = "Task $index", description = "this is task number $index")
     }
   }
+
+  /**
+   * Find the first task to execute.
+   */
+  fun first() : WorstDayTask
 
   /**
    * Find the next task to choose. The list of already existing tasks can be passed to avoid repetition.
@@ -28,7 +36,7 @@ interface FindNextTaskStrategy {
    * @param previousTasks - the tasks already existing in a process.
    * @return the next task to be added to the process
    */
-  fun next(previousTasks: List<WorstDayTask> = emptyList()) : WorstDayTask
+  fun next(previousTasks: WorstDayTasks): WorstDayTask
 
   /**
    * Uses [FindNextTaskStrategy#next] to determine the next task to add, modifies the process and returns it for deployment/migration.
@@ -36,5 +44,5 @@ interface FindNextTaskStrategy {
    * @param process the current process
    * @return modified process with task [FindNextTaskStrategy#next] added.
    */
-  fun nextVersion(process: WorstDayProcess) : WorstDayProcess = process.addTask(next(process.tasks))
+  fun nextVersion(process: WorstDayProcess): WorstDayProcess = process.addTask(next(process.tasks))
 }

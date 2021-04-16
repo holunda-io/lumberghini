@@ -5,6 +5,7 @@ import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.process
 import io.holunda.funstuff.lumberghini.properties.TaskId
 import io.holunda.funstuff.lumberghini.task.TaskDataConfiguration
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
+import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import java.time.LocalDate
 
 object WorstDayProcessFixtures {
@@ -49,9 +50,9 @@ object WorstDayProcessFixtures {
   fun processWithTasks(vararg tasks: WorstDayTask) = WorstDayProcess(
     day = day,
     userName = userName,
-    tasks = tasks.toList()
+    tasks = WorstDayTasks(*tasks)
   )
 
-  fun WorstDayTask.setCount(count:Int) = copy(taskId = this.taskId.copy(count = count))
+  fun WorstDayTask.setCount(count: Int) = copy(taskId = this.taskId.copy(count = count))
 
 }
