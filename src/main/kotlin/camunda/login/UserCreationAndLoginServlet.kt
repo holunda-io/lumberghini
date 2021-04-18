@@ -1,5 +1,6 @@
 package io.holunda.funstuff.lumberghini.camunda.login
 
+import io.holunda.funstuff.lumberghini.process.WorstDayProcessService
 import mu.KLogging
 import org.camunda.bpm.engine.IdentityService
 import org.camunda.bpm.webapp.impl.security.auth.AuthenticationService
@@ -16,13 +17,16 @@ import javax.validation.constraints.NotNull
 
 @Controller
 @RequestMapping("/public")
-class UserCreationAndLoginServlet(private val identityService: IdentityService) {
+class UserCreationAndLoginServlet(
+  private val identityService: IdentityService,
+  private val worstDayProcessService: WorstDayProcessService
+  ) {
   companion object : KLogging()
 
   private val authenticationService = AuthenticationService()
 
   @PostMapping(value = ["/create-user"], consumes = ["application/x-www-form-urlencoded;charset=UTF-8"])
-  fun createAndLogin(@ModelAttribute newUserModel: @Valid NewUserModel, session: HttpSession?): ModelAndView? {
+  fun createAndLogin(@ModelAttribute newUserModel: @Valid NewUserModel, session: HttpSession): ModelAndView {
     val userId = newUserModel.userId!!.trim { it <= ' ' }
     return try {
       if (identityService.createUserQuery().userId(userId).count() == 0L) {
@@ -42,9 +46,11 @@ class UserCreationAndLoginServlet(private val identityService: IdentityService) 
         Authentications.updateSession(session, this)
       }
 
+      worstDayProcessService.start(userId)
+
       logger.info("User '$userId' is now logged in.")
       // redirect to welcome
-      ModelAndView("redirect:/app/welcome/default/")
+      ModelAndView("redirect:/app/tasklist/default/")
     } catch (e: Exception) {
       logger.error("Error logging you in", e)
       ModelAndView("/index.html")

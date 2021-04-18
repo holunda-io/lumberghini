@@ -26,7 +26,7 @@ data class WorstDayProcess (
   /**
    * What is your name, poor fellow?
    */
-  val userName: String,
+  val userId: String,
 
   /**
    * What are the tasks you have to fulfill?
@@ -46,6 +46,7 @@ data class WorstDayProcess (
 
     object VARIABLES {
       val processInstanceId = stringVariable("processInstanceId")
+      val userId = stringVariable("userId")
       val userName = stringVariable("userName")
       val day = stringVariable("day")
     }
@@ -72,7 +73,7 @@ data class WorstDayProcess (
 
       return WorstDayProcess(
         day = LocalDate.parse(day, datePattern),
-        userName = userName,
+        userId = userName,
         tasks = tasks,
         processDefinitionId = definitionId
       )
@@ -102,7 +103,7 @@ data class WorstDayProcess (
   /**
    * This process' definition key, based on userName and day.
    */
-  val processDefinitionKey = processDefinitionKey(userName, day)
+  val processDefinitionKey = processDefinitionKey(userId, day)
 
   /**
    * This process' resource name (`processDefinitionKey.bpmn`)
@@ -112,7 +113,7 @@ data class WorstDayProcess (
   /**
    * This process' display name.
    */
-  val processName = "Worst Day in the life of $userName ($day)"
+  val processName = "Worst Day in the life of $userId ($day)"
 
   /**
    * Create the [BpmnModelInstance] based on the tasks of this process.

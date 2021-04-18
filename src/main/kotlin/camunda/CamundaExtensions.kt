@@ -21,7 +21,6 @@ object CamundaExtensions {
   @Retention(AnnotationRetention.SOURCE)
   annotation class DelegateExpression
 
-
   val CommandContext.runtimeService get() = this.processEngineConfiguration.runtimeService
 
   fun DelegateExecution.commandExecutor() = CommandExecutorAdapter(processEngine.processEngineConfiguration as ProcessEngineConfigurationImpl)

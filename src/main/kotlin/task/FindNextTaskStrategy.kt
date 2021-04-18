@@ -1,28 +1,12 @@
 package io.holunda.funstuff.lumberghini.task
 
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess
-import io.holunda.funstuff.lumberghini.properties.TaskId
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Strategy Pattern that determines which next tasks gets added to the current process.
  */
 interface FindNextTaskStrategy {
-  companion object {
-    /**
-     * A default fallback strategy that just keeps adding numerated tasks. Might be moved to test-scope.
-     */
-    // TODO move to Test Fixtures
-    fun countingNextTaskStrategy() = object : FindNextTaskStrategy {
-      private val count = AtomicInteger(1)
-
-      override fun first(): WorstDayTask = task(count.getAndIncrement())
-
-      override fun next(previousTasks: WorstDayTasks): WorstDayTask = task(count.getAndIncrement())
-
-      private fun task(index: Int) = WorstDayTask(taskId = TaskId(id = index), name = "Task $index", description = "this is task number $index")
-    }
-  }
 
   /**
    * Find the first task to execute.

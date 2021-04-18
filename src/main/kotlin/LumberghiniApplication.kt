@@ -98,6 +98,8 @@ typealias DeploymentId = String
  */
 typealias TaskDefinitionKey = String
 
+typealias BusinessKey = Pair<UserName, LocalDate>
+
 
 /**
  * Configured via SPI in `src/main/resources/META-INF/services/org.camunda.spin.spi.DataFormatConfigurator`.

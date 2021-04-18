@@ -1,6 +1,5 @@
 package io.holunda.funstuff.lumberghini.task
 
-import io.holunda.funstuff.lumberghini.properties.TaskId
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

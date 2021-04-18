@@ -1,4 +1,4 @@
-package io.holunda.funstuff.lumberghini.properties
+package io.holunda.funstuff.lumberghini.task
 
 import io.holunda.funstuff.lumberghini.TaskDefinitionKey
 

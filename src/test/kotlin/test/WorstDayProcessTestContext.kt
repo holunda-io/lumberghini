@@ -4,15 +4,12 @@ import io.holunda.funstuff.lumberghini.process.WorstDayProcessDefinitionReposito
 import io.holunda.funstuff.lumberghini.process.WorstDayProcessService
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess
 import io.holunda.funstuff.lumberghini.process.support.StarterProcess
-import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
+import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.countingNextTaskStrategy
 import org.camunda.bpm.engine.*
-import org.camunda.bpm.engine.impl.cfg.AbstractProcessEnginePlugin
-import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl
 import org.camunda.bpm.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration
 import org.camunda.bpm.engine.impl.history.HistoryLevel
 import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.test.ProcessEngineRule
-import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests
 import org.camunda.bpm.engine.test.mock.MockExpressionManager
 import org.camunda.spin.plugin.impl.SpinProcessEnginePlugin
 
@@ -50,7 +47,8 @@ class WorstDayProcessTestContext(
 
   val service = WorstDayProcessService(
     runtimeService = runtimeService,
-    findNextTaskStrategy = FindNextTaskStrategy.countingNextTaskStrategy(),
+    identityService = identityService,
+    findNextTaskStrategy = countingNextTaskStrategy(),
     todaySupplier = WorstDayProcessFixtures.daySupplier,
     repository = repository
   )
@@ -64,6 +62,13 @@ class WorstDayProcessTestContext(
   val starterProcess = StarterProcess(
     runtimeService = runtimeService
   )
+
+  fun createUser(userId: String, firstName: String, lastName: String) = identityService.newUser(userId).apply {
+    this.firstName = firstName
+    this.lastName = lastName
+    this.password = userId
+  }
+
 
   override fun getRuntimeService(): RuntimeService = processEngine.runtimeService
   override fun getRepositoryService(): RepositoryService = processEngine.repositoryService

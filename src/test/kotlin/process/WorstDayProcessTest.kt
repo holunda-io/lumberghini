@@ -1,13 +1,11 @@
 package io.holunda.funstuff.lumberghini.process
 
-import io.holunda.funstuff.lumberghini.properties.TaskId
+import io.holunda.funstuff.lumberghini.task.TaskId
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
-import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.processWithTasks
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.setCount
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.junit.Test
 
@@ -31,9 +29,9 @@ class WorstDayProcessTest {
     assertThat(process.tasks.first().count).isEqualTo(1)
     assertThat(process.tasks.first().taskDefinitionKey).isEqualTo("task-001-01")
     assertThat(process.version).isEqualTo(1)
-    assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter-20201116")
-    assertThat(process.processResourceName).isEqualTo("processWorstDay-peter-20201116.bpmn")
-    assertThat(process.processName).isEqualTo("Worst Day in the life of peter (2020-11-16)")
+    assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter_gibbons-20201116")
+    assertThat(process.processResourceName).isEqualTo("processWorstDay-peter_gibbons-20201116.bpmn")
+    assertThat(process.processName).isEqualTo("Worst Day in the life of peter_gibbons (2020-11-16)")
 
   }
 
@@ -41,7 +39,7 @@ class WorstDayProcessTest {
   fun `add second task`() {
     var process = processWithTasks(WorstDayProcessFixtures.task2)
 
-    assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter-20201116")
+    assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter_gibbons-20201116")
     assertThat(process.version).isEqualTo(1)
     assertThat(process.tasks.first().taskId).isEqualTo(TaskId(id = 2, count = 1))
 
@@ -62,7 +60,7 @@ class WorstDayProcessTest {
 
     // read modified process
     process = WorstDayProcess.readFromModelInstance(process.bpmnModelInstance)
-    assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter-20201116")
+    assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter_gibbons-20201116")
     assertThat(process.version).isEqualTo(2)
     assertThat(process.tasks).containsExactlyInAnyOrder(
       WorstDayProcessFixtures.task2.setCount(1),
@@ -79,7 +77,7 @@ class WorstDayProcessTest {
     val next = WorstDayProcess.readFromModelInstance(bpmn)
 
     assertThat(next.day).isEqualTo(WorstDayProcessFixtures.day)
-    assertThat(next.userName).isEqualTo(WorstDayProcessFixtures.userName)
+    assertThat(next.userId).isEqualTo(WorstDayProcessFixtures.userId)
     assertThat(next.tasks).hasSize(1)
 
     with(next.tasks.first()) {

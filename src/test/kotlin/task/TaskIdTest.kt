@@ -1,4 +1,4 @@
-package io.holunda.funstuff.lumberghini.properties
+package io.holunda.funstuff.lumberghini.task
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

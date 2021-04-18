@@ -7,10 +7,11 @@ import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.VARIABL
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.datePattern
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.startMigrationProcess
 import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
-import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import mu.KLogging
+import org.camunda.bpm.engine.IdentityService
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.ExecutionListener
+import org.camunda.bpm.engine.delegate.TaskListener
 import org.camunda.bpm.engine.repository.Deployment
 import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.springframework.stereotype.Component
@@ -19,6 +20,7 @@ import java.time.LocalDate
 @Component(WorstDayProcessService.NAME)
 class WorstDayProcessService(
   private val runtimeService: RuntimeService,
+  private val identityService: IdentityService,
   private val findNextTaskStrategy: FindNextTaskStrategy,
   private val todaySupplier: () -> LocalDate = { LocalDate.now() },
   private val repository: WorstDayProcessDefinitionRepository
@@ -38,23 +40,25 @@ class WorstDayProcessService(
     }
   }
 
+
   @DelegateExpression
   fun throwLumberghInterventionListener() = LumberghInterventionException.throwExceptionListener()
 
-  fun start(userName: String): ProcessInstance {
-    val process = findDeployedProcess(userName) ?: deploy(create(userName))
+  fun start(userId: String): ProcessInstance {
+    val process = findDeployedProcess(userId) ?: deploy(create(userId))
+    val date = process.day.format(datePattern)
     return runtimeService.findSingleInstance(process) ?: runtimeService.startProcessInstanceByKey(
       process.processDefinitionKey,
       CamundaBpmData.builder()
-        .set(VARIABLES.userName, process.userName)
-        .set(VARIABLES.day, process.day.format(datePattern))
+        .set(VARIABLES.userName, process.userId)
+        .set(VARIABLES.day, date)
         .build()
     )
   }
 
-  fun create(userName: UserName) = WorstDayProcess(
+  fun create(userId: String) = WorstDayProcess(
     day = todaySupplier(),
-    userName = userName
+    userId = userId
   ).addTask(findNextTaskStrategy.first())
 
   fun createNext(process: WorstDayProcess): WorstDayProcess = findNextTaskStrategy.nextVersion(process)
@@ -63,10 +67,10 @@ class WorstDayProcessService(
     create(userName)
   )
 
-  fun loadProcess(userName: UserName) = findDeployedProcess(userName)
-    ?: throw IllegalArgumentException("no process deployed for user=$userName, day=${todaySupplier()}")
+  fun loadProcess(userId: String) = findDeployedProcess(userId)
+    ?: throw IllegalArgumentException("no process deployed for user=$userId, day=${todaySupplier()}")
 
-  fun findDeployedProcess(userName: UserName): WorstDayProcess? = repository.findByUserName(userName)
+  fun findDeployedProcess(userId: String): WorstDayProcess? = repository.findByUserId(userId)
 
   fun deploy(process: WorstDayProcess): WorstDayProcess {
     val deployment: Deployment = repository.deploy(process)

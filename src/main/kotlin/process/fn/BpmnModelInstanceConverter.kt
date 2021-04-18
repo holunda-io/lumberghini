@@ -3,7 +3,7 @@ package io.holunda.funstuff.lumberghini.process.fn
 import io.holunda.funstuff.lumberghini.ProcessDefinitionId
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.ELEMENTS.EVENT_START
-import io.holunda.funstuff.lumberghini.properties.TaskId
+import io.holunda.funstuff.lumberghini.task.TaskId
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import org.camunda.bpm.engine.delegate.ExecutionListener
@@ -54,6 +54,7 @@ object BpmnModelInstanceConverter {
             .userTask(task.taskDefinitionKey)
             .name(task.name)
             .documentation(task.description)
+            .camundaAssignee(process.userId)
           // update the lastUserTask id for the next iteration
           lastElementId = task.taskDefinitionKey
         }

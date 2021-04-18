@@ -1,7 +1,5 @@
 package io.holunda.funstuff.lumberghini.task
 
-import io.holunda.funstuff.lumberghini.properties.TaskId
-
 
 /**
  * A user task in the process, defined by id, name and description.

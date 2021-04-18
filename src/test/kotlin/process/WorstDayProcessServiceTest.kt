@@ -10,7 +10,6 @@ import io.holunda.funstuff.lumberghini.test.WorstDayProcessTestContext
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessTestContext.Companion.manageDeployments
 import org.assertj.core.api.Assertions.assertThat
 import org.camunda.bpm.engine.runtime.ProcessInstance
-import org.camunda.bpm.engine.spring.annotations.StartProcess
 import org.camunda.bpm.engine.test.Deployment
 import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*
 import org.camunda.bpm.engine.variable.Variables
@@ -38,6 +37,8 @@ class WorstDayProcessServiceTest {
     assertThat(repository.findAll()).isEmpty()
     CamundaMockito.registerInstance(service)
     CamundaMockito.registerInstance(context.migrationProcess)
+
+    context.createUser(WorstDayProcessFixtures.userId, WorstDayProcessFixtures.userFirstName, WorstDayProcessFixtures.userLastName)
   }
 
   @After
@@ -47,21 +48,23 @@ class WorstDayProcessServiceTest {
 
   @Test
   fun `can deploy`() {
-    service.deploy(service.create(WorstDayProcessFixtures.userName))
+    service.deploy(service.create(WorstDayProcessFixtures.userId))
   }
 
   @Test
   fun `create, deploy and start process for user`() {
-    val processInstance = startProcess(WorstDayProcessFixtures.userName)
+    val processInstance = startProcess(WorstDayProcessFixtures.userId)
+
 
     cAssertThat(processInstance).isActive.isWaitingAt("task-001-01")
+    cAssertThat(task()).isAssignedTo(WorstDayProcessFixtures.userId)
   }
 
   @Test
   fun `deploy created process`() {
     assertThat(repository.getDeployments()).isEmpty()
 
-    var process = service.create(WorstDayProcessFixtures.userName)
+    var process = service.create(WorstDayProcessFixtures.userId)
 
     process = service.deploy(process)
     assertThat(process.processDefinitionId).isNotNull()
@@ -73,10 +76,10 @@ class WorstDayProcessServiceTest {
 
   @Test
   fun `create process for peter`() {
-    val process = service.create(WorstDayProcessFixtures.userName)
+    val process = service.create(WorstDayProcessFixtures.userId)
     assertThat(process.version).isEqualTo(1)
     assertThat(process.tasks.first().taskId.id).isEqualTo(1)
-    assertThat(process.processResourceName).isEqualTo("processWorstDay-peter-20201116.bpmn")
+    assertThat(process.processResourceName).isEqualTo("processWorstDay-peter_gibbons-20201116.bpmn")
     assertThat(process.processDefinitionId).isNull()
   }
 
@@ -85,18 +88,18 @@ class WorstDayProcessServiceTest {
     assertThat(repository.findAll()).isEmpty()
 
     val starterInstance = camunda.runtimeService.startProcessInstanceByKey("$PREFIX-starter", Variables.createVariables()
-      .putValue("userName", WorstDayProcessFixtures.userName)
+      .putValue("userName", WorstDayProcessFixtures.userId)
     )
     cAssertThat(starterInstance).isWaitingAt("serviceTask_deploy")
     execute(job("serviceTask_deploy"))
 
-    assertThat(repository.findByUserName(WorstDayProcessFixtures.userName)).isNotNull
+    assertThat(repository.findByUserId(WorstDayProcessFixtures.userId)).isNotNull
 
     cAssertThat(starterInstance).isWaitingAt("serviceTask_start")
     execute(job("serviceTask_start"))
     cAssertThat(starterInstance).isEnded
 
-    val processInstance: ProcessInstance = startProcess(WorstDayProcessFixtures.userName)
+    val processInstance: ProcessInstance = startProcess(WorstDayProcessFixtures.userId)
     assertThat(processInstance).isNotNull
     cAssertThat(processInstance).isWaitingAt("task-001-01")
   }

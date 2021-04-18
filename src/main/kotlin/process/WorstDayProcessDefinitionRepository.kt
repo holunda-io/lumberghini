@@ -27,11 +27,11 @@ class WorstDayProcessDefinitionRepository(
     .singleResult()
     .id.let { loadByProcessDefinitionId(it) }
 
-  fun findByUserName(userName: UserName): WorstDayProcess? {
+  fun findByUserId(userId: String): WorstDayProcess? {
     val definitionId: String = repositoryService
       .createProcessDefinitionQuery()
       .latestVersion()
-      .processDefinitionKey(WorstDayProcess.processDefinitionKey(userName, day = todaySupplier()))
+      .processDefinitionKey(WorstDayProcess.processDefinitionKey(userId, day = todaySupplier()))
       .singleResult()
       ?.id
       ?: return null
