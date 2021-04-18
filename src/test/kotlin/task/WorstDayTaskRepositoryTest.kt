@@ -1,6 +1,7 @@
 package io.holunda.funstuff.lumberghini.task
 
 import io.holunda.funstuff.lumberghini.properties.LumberghiniConfigurationProperties
+import io.holunda.funstuff.lumberghini.properties.TaskId
 import io.holunda.funstuff.lumberghini.task.TaskDataConfiguration.Colleague
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.TaskDataConfigurations
 import org.assertj.core.api.Assertions.assertThat
@@ -27,8 +28,7 @@ internal class WorstDayTaskRepositoryTest {
   @Test
   internal fun `find by id = 1`() {
     with(repository.findById(1)) {
-      assertThat(taskId.id).isEqualTo(1)
-      assertThat(taskId.count).isEqualTo(1)
+      assertThat(taskId).isEqualTo(TaskId(id = 1))
       assertThat(name).isEqualTo("This is my task")
       assertThat(description).isEqualTo("Another interesting Job you must do")
       assertThat(context).isEqualTo(Colleague.Milton.name)
@@ -46,17 +46,17 @@ internal class WorstDayTaskRepositoryTest {
   internal fun `find all contains tasks from properties`() {
     val all = repository.findAll()
     assertThat(all).hasSize(2)
+    assertThat(all.none { it.inUse }).isTrue
+
 
     with(all[0]) {
       assertThat(taskId.id).isEqualTo(1)
-      assertThat(taskId.count).isEqualTo(1)
       assertThat(name).isEqualTo("This is my task")
       assertThat(description).isEqualTo("Another interesting Job you must do")
       assertThat(context).isEqualTo(Colleague.Milton.name)
     }
     with(all[1]) {
       assertThat(taskId.id).isEqualTo(2)
-      assertThat(taskId.count).isEqualTo(1)
       assertThat(name).isEqualTo("Where are the TPS reports")
       assertThat(description).isEqualTo("Come in on Saturday")
       assertThat(context).isEqualTo(Colleague.Bill.name)

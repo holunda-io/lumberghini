@@ -54,9 +54,6 @@ class LumberghiniApplication : CommandLineRunner {
       setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST))
     }
 
-  @Bean
-  // FIXME: use worst day startegy!
-  fun findNextTaskStrategy() = FindNextTaskStrategy.countingNextTaskStrategy()
 
   @Bean
   fun objectMapper() = jacksonObjectMapper().configure()

@@ -16,22 +16,12 @@ data class WorstDayTask(
     fun from(list: List<TaskDataConfiguration>): List<WorstDayTask> = list.mapIndexed { id, taskData -> WorstDayTask(id + 1, taskData) }
 
     operator fun invoke(id: Int, taskData: TaskDataConfiguration) = WorstDayTask(
-      taskId = TaskId(id = id, count = 1),
+      taskId = TaskId(id = id),
       name = taskData.name,
       description = taskData.description,
       context = taskData.colleague.name
     )
   }
-
-//  init {
-//    require(index >= 0) { "a tasks index must be >=0" }
-//    require(index < 1000) { "a tasks index must be < 1000" }
-//  }
-
-//  fun withIndex(index: Int) = copy(index = index)
-
-//  private val indexFormat = "$index".padStart(3, '0')
-
 
   /**
    * Becomes `true` ones a tasks is added/used in a process. `false` as long it is just declared in the repository.

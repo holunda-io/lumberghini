@@ -11,7 +11,7 @@ internal class WorstDayNextTaskRandomStrategyTest {
 
   @Test
   internal fun `select first - would be random but here it is the first entry`() {
-    val (repository, strategy) = init(
+    val (_, strategy) = init(
       TaskDataConfigurations.milton1,
       TaskDataConfigurations.bill1,
       TaskDataConfigurations.milton2,
@@ -22,12 +22,12 @@ internal class WorstDayNextTaskRandomStrategyTest {
   }
 
   @Test
-  internal fun `follow up task is different from task 1`() {
+  internal fun `follow up task is first with lowest count`() {
     val (repository, strategy) = init(
       TaskDataConfigurations.milton1,
       TaskDataConfigurations.bill1
     )
-    val previous = WorstDayTasks(repository.findById(1))
+    val previous = WorstDayTasks.EMPTY.add(repository.findById(1))
 
     assertThat(strategy.next(previous).taskId.id).isEqualTo(2)
   }

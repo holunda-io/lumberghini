@@ -12,7 +12,7 @@ class WorstDayNextTaskRandomStrategy(
   /*+
    * picks a tasks from given list randomly ... this can be overwritten for unit testing
    */
-  private val random : (List<WorstDayTask>) -> WorstDayTask = { repository.findAll().random() }
+  private val random: (List<WorstDayTask>) -> WorstDayTask = { repository.findAll().random() }
 ) : FindNextTaskStrategy {
 
   /**
@@ -23,11 +23,9 @@ class WorstDayNextTaskRandomStrategy(
   /**
    * Follow up tasks are selected based on previous tasks.
    */
-  override fun next(previousTasks: WorstDayTasks): WorstDayTask {
-    if (repository.size() == 1) {
-      return repository.findById(previousTasks[0].taskId.id)
-    }
+  override fun next(previousTasks: WorstDayTasks): WorstDayTask = WorstDayTasks(repository.findAll()
+    .toMutableList().apply { addAll(previousTasks) })
+    .tasksWithLowestCount
+    .let(random)
 
-    TODO() // return random()
-  }
 }
