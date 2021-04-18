@@ -54,9 +54,8 @@ class WorstDayProcessService(
 
   fun create(userName: UserName) = WorstDayProcess(
     day = todaySupplier(),
-    userName = userName,
-    tasks = WorstDayTasks(findNextTaskStrategy.first())
-  )
+    userName = userName
+  ).addTask(findNextTaskStrategy.first())
 
   fun createNext(process: WorstDayProcess): WorstDayProcess = findNextTaskStrategy.nextVersion(process)
 

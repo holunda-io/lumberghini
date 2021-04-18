@@ -10,7 +10,7 @@ class TaskIdTest {
   @Test
   internal fun `create task id from index`() {
     assertThat(TaskId(id = 1).taskDefinitionKey)
-      .isEqualTo("task-001-01")
+      .isEqualTo("task-001-00")
   }
 
   @Test

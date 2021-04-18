@@ -9,15 +9,8 @@ import org.junit.jupiter.api.Test
 internal class WorstDayTasksTest {
 
   @Test
-  internal fun `must not be empty`() {
-    assertThatThrownBy { WorstDayTasks(emptyList()) }
-      .isInstanceOf(IllegalArgumentException::class.java)
-      .hasMessage("worst day tasks must not be empty.")
-  }
-
-  @Test
   internal fun `list with task1`() {
-    val list = WorstDayTasks(WorstDayProcessFixtures.task1)
+    val list = WorstDayTasks.EMPTY.add(WorstDayProcessFixtures.task1)
 
     assertThat(list).hasSize(1)
     assertThat(list[0].taskId.id).isEqualTo(1)
@@ -26,7 +19,7 @@ internal class WorstDayTasksTest {
 
   @Test
   internal fun `max task count exiting`() {
-    assertThat(WorstDayTasks(WorstDayProcessFixtures.task1).maxTaskCount(1)).isEqualTo(1)
+    assertThat(WorstDayTasks.EMPTY.add(WorstDayProcessFixtures.task1).maxTaskCount(1)).isEqualTo(1)
   }
 
   @Test
@@ -36,7 +29,7 @@ internal class WorstDayTasksTest {
 
   @Test
   internal fun `add task again`() {
-    var tasks = WorstDayTasks(WorstDayProcessFixtures.task1)
+    var tasks = WorstDayTasks.EMPTY.add(WorstDayProcessFixtures.task1)
 
     assertThat(tasks).hasSize(1)
 
@@ -52,16 +45,14 @@ internal class WorstDayTasksTest {
 
   @Test
   internal fun `find tasks with lowest count`() {
-    fun task(id: Int, count: Int) = WorstDayTask(taskId = TaskId(id = id, count = count), name = "foo", description = "desc", context = "")
-
-    val tasks = WorstDayTasks(
-      task(1, 1),
-      task(1, 2),
-      task(1, 3),
-      task(2, 1),
-      task(2, 2),
-      task(3, 1),
-      task(4, 1),
+    val tasks = tasks (
+      1 to 1,
+      1 to 2,
+      1 to 3,
+      2 to 1,
+      2 to 2,
+      3 to 1,
+      4 to 1
     )
 
     assertThat(tasks.taskIdAndMaxCount[1]).isEqualTo(3)
@@ -72,4 +63,29 @@ internal class WorstDayTasksTest {
     assertThat(tasks.tasksWithLowestCount.map { it.taskId.id })
       .containsExactlyInAnyOrder(3, 4)
   }
+
+  @Test
+  internal fun `find latest tasks (highest count)`() {
+    val tasks = tasks (
+      1 to 1,
+      1 to 2,
+      1 to 3,
+      2 to 1,
+      2 to 2,
+      3 to 1,
+      4 to 1
+    )
+
+    val tasksWithHighestCount = tasks.tasksWithHighestCount
+
+    assertThat(tasksWithHighestCount.map { it.taskId.id to it.taskId.count }).containsExactly(
+      1 to 3,
+      2 to 2,
+      3 to 1,
+      4 to 1
+    )
+  }
+
+  private fun tasks(vararg idAndCount : Pair<Int,Int>) = WorstDayTasks(idAndCount.map { task(it.first, it.second) })
+  private fun task(id: Int, count: Int) = WorstDayTask(taskId = TaskId(id = id, count = count), name = "foo", description = "desc", context = "")
 }

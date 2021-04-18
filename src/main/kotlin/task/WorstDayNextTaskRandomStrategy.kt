@@ -3,8 +3,15 @@ package io.holunda.funstuff.lumberghini.task
 import org.springframework.stereotype.Component
 
 @Component
-class WorstDayNextTaskStrategy(
+class WorstDayNextTaskRandomStrategy(
+  /**
+   * Stores all available tasks.
+   */
   private val repository: WorstDayTaskRepository,
+
+  /*+
+   * picks a tasks from given list randomly ... this can be overwritten for unit testing
+   */
   private val random : (List<WorstDayTask>) -> WorstDayTask = { repository.findAll().random() }
 ) : FindNextTaskStrategy {
 
@@ -21,6 +28,6 @@ class WorstDayNextTaskStrategy(
       return repository.findById(previousTasks[0].taskId.id)
     }
 
-    TODO("Not yet implemented")
+    TODO() // return random()
   }
 }

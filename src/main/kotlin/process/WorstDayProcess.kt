@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
  *
  * Each process is unique for a given date and user.
  */
-data class WorstDayProcess(
+data class WorstDayProcess (
   /**
    * which day is your worst?
    */
@@ -31,7 +31,7 @@ data class WorstDayProcess(
   /**
    * What are the tasks you have to fulfill?
    */
-  val tasks: WorstDayTasks,
+  val tasks: WorstDayTasks = WorstDayTasks.EMPTY,
 
   /**
    * The processDefinitionId this process gets, once it was deployed.
@@ -85,7 +85,7 @@ data class WorstDayProcess(
   }
 
   init {
-    require(tasks.isNotEmpty()) { "the process needs at least one user task!" }
+    require(tasks.none { !it.inUse }) { "tasks in a process must have count > 0, please use factory method instead of constructor." }
   }
 
   /**

@@ -7,12 +7,11 @@ package io.holunda.funstuff.lumberghini.task
 data class WorstDayTasks(
   val list: List<WorstDayTask>
 ) : List<WorstDayTask> by list {
+  companion object {
+    val EMPTY = WorstDayTasks(emptyList())
+  }
 
   constructor(vararg tasks: WorstDayTask) : this(tasks.toList())
-
-  init {
-    require(!isEmpty()) { "worst day tasks must not be empty." }
-  }
 
   val taskCount by lazy { asSequence().map { it.taskId.id }.map { it to maxTaskCount(it) }.toMap() }
   val lowestCount by lazy { taskCount.values.minByOrNull { it } ?: 1 }

@@ -33,6 +33,11 @@ data class WorstDayTask(
 //  private val indexFormat = "$index".padStart(3, '0')
 
 
+  /**
+   * Becomes `true` ones a tasks is added/used in a process. `false` as long it is just declared in the repository.
+   */
+  val inUse = taskId.count > 0
+
   val taskDefinitionKey = taskId.taskDefinitionKey
   val count = taskId.count
 

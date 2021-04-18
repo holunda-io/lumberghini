@@ -54,8 +54,6 @@ class WorstDayProcessServiceTest {
   fun `create, deploy and start process for user`() {
     val processInstance = startProcess(WorstDayProcessFixtures.userName)
 
-
-
     cAssertThat(processInstance).isActive.isWaitingAt("task-001-01")
   }
 

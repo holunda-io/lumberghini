@@ -13,12 +13,6 @@ import org.junit.Test
 
 class WorstDayProcessTest {
 
-  @Test
-  fun `fail with empty task list`() {
-    assertThatThrownBy { WorstDayProcess(day = WorstDayProcessFixtures.day, userName = WorstDayProcessFixtures.userName, tasks = WorstDayTasks(emptyList())) }
-      .isInstanceOf(IllegalArgumentException::class.java)
-      .hasMessage("worst day tasks must not be empty.")
-  }
 
   @Test
   fun `max task count=0 if task not exists`() {
@@ -30,12 +24,12 @@ class WorstDayProcessTest {
 
   @Test
   fun `create with single task`() {
-    val process = WorstDayProcessFixtures.processWithTasks(WorstDayProcessFixtures.task1.setCount(10))
+    val process = processWithTasks(WorstDayProcessFixtures.task1)
 
     Bpmn.validateModel(process.bpmnModelInstance)
     assertThat(process.tasks).hasSize(1)
-    assertThat(process.tasks.first().count).isEqualTo(10)
-    assertThat(process.tasks.first().taskDefinitionKey).isEqualTo("task-001-10")
+    assertThat(process.tasks.first().count).isEqualTo(1)
+    assertThat(process.tasks.first().taskDefinitionKey).isEqualTo("task-001-01")
     assertThat(process.version).isEqualTo(1)
     assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter-20201116")
     assertThat(process.processResourceName).isEqualTo("processWorstDay-peter-20201116.bpmn")
@@ -49,12 +43,10 @@ class WorstDayProcessTest {
 
     assertThat(process.processDefinitionKey).isEqualTo("processWorstDay-peter-20201116")
     assertThat(process.version).isEqualTo(1)
-    assertThat(process.tasks.first().taskId.id).isEqualTo(2)
-    assertThat(process.tasks.first().count).isEqualTo(1)
+    assertThat(process.tasks.first().taskId).isEqualTo(TaskId(id = 2, count = 1))
 
     // add a task
-    assertThat(WorstDayProcessFixtures.task1.taskId.id).isEqualTo(1)
-    assertThat(WorstDayProcessFixtures.task1.taskId.count).isEqualTo(1)
+    assertThat(WorstDayProcessFixtures.task1.taskId).isEqualTo(TaskId(id = 1, count = 0))
 
     process = process.addTask(WorstDayProcessFixtures.task1)
 
@@ -94,14 +86,15 @@ class WorstDayProcessTest {
       assertThat(description).isEqualTo(WorstDayProcessFixtures.task1.description)
       assertThat(name).isEqualTo(WorstDayProcessFixtures.task1.name)
       assertThat(count).isEqualTo(1)
-      assertThat(taskId).isEqualTo(WorstDayProcessFixtures.task1.taskId)
+      assertThat(taskId).isEqualTo(TaskId(id = 1, count = 1))
       assertThat(taskDefinitionKey).isEqualTo("task-001-01")
     }
   }
 
   @Test
   fun `task index`() = with(WorstDayProcessFixtures.task1) {
-    assertThat(taskDefinitionKey).isEqualTo("task-001-01")
+    assertThat(taskDefinitionKey).isEqualTo("task-001-00")
+    assertThat(inUse).isFalse
     assertThat(name).isEqualTo("Task 1")
     assertThat(description).isEqualTo("the task one")
   }.let { }

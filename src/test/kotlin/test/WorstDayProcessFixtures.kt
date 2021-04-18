@@ -23,6 +23,18 @@ object WorstDayProcessFixtures {
       description = "Come in on Saturday",
       colleague = TaskDataConfiguration.Colleague.Bill
     )
+
+    val milton2 = TaskDataConfiguration(
+      name = "I believe you have my stapler.",
+      description = "I need my stapler",
+      colleague = TaskDataConfiguration.Colleague.Milton
+    )
+
+    val bill2 = TaskDataConfiguration(
+      name = "Did you get my memo?",
+      description = "Well, Did you?",
+      colleague = TaskDataConfiguration.Colleague.Bill
+    )
   }
 
   const val userName = "peter"
@@ -47,11 +59,12 @@ object WorstDayProcessFixtures {
 
   val processWithTask1AndTask2 = processWithTasks(task1, task2)
 
-  fun processWithTasks(vararg tasks: WorstDayTask) = WorstDayProcess(
-    day = day,
-    userName = userName,
-    tasks = WorstDayTasks(*tasks)
-  )
+  fun processWithTasks(vararg tasks: WorstDayTask): WorstDayProcess = tasks.fold(
+    WorstDayProcess(
+      day = day,
+      userName = userName
+    )
+  ) { p, t -> p.addTask(t) }
 
   fun WorstDayTask.setCount(count: Int) = copy(taskId = this.taskId.copy(count = count))
 

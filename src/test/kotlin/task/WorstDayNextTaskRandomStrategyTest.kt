@@ -5,15 +5,17 @@ import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.TaskDataConf
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class WorstDayNextTaskStrategyTest {
+internal class WorstDayNextTaskRandomStrategyTest {
 
   private val first: (List<WorstDayTask>) -> WorstDayTask = { it.first() }
 
   @Test
-  internal fun `select first`() {
+  internal fun `select first - would be random but here it is the first entry`() {
     val (repository, strategy) = init(
       TaskDataConfigurations.milton1,
-      TaskDataConfigurations.bill1
+      TaskDataConfigurations.bill1,
+      TaskDataConfigurations.milton2,
+      TaskDataConfigurations.bill2,
     )
 
     assertThat(strategy.first().name).isEqualTo(TaskDataConfigurations.milton1.name)
@@ -40,14 +42,16 @@ internal class WorstDayNextTaskStrategyTest {
     assertThat(strategy.next(previous)).isEqualTo(previous[0])
   }
 
-  private fun init(vararg data : TaskDataConfiguration): Pair<WorstDayTaskRepository, WorstDayNextTaskStrategy> {
+
+
+  private fun init(vararg data: TaskDataConfiguration): Pair<WorstDayTaskRepository, WorstDayNextTaskRandomStrategy> {
     val properties = LumberghiniConfigurationProperties(
       tasks = listOf(*data)
     )
 
     val repository = WorstDayTaskRepository(properties)
 
-    val strategy = WorstDayNextTaskStrategy(repository, first)
+    val strategy = WorstDayNextTaskRandomStrategy(repository, first)
 
     return repository to strategy
   }

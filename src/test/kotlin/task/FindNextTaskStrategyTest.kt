@@ -11,9 +11,8 @@ class FindNextTaskStrategyTest {
 
   private val process = WorstDayProcess(
     day = WorstDayProcessFixtures.day,
-    userName = WorstDayProcessFixtures.userName,
-    tasks = WorstDayTasks(strategy.first())
-  )
+    userName = WorstDayProcessFixtures.userName
+  ).addTask(strategy.first())
 
   @Test
   fun `next process iteration`() {
