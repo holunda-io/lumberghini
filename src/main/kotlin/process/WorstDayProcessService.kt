@@ -36,6 +36,7 @@ class WorstDayProcessService(
   @DelegateExpression
   fun startMigrationListener() = ExecutionListener {
     with(it) {
+
       startMigrationProcess(processInstanceId, processDefinitionId)
     }
   }

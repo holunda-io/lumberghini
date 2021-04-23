@@ -1,41 +1,179 @@
 <html lang="en">
 <head>
-  <title>Lumberghini</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
-        crossorigin="anonymous">
+  <style type="text/css">[uib-typeahead-popup].dropdown-menu {
+    display: block;
+  }</style>
+  <style type="text/css">.uib-time input {
+    width: 50px;
+  }</style>
+  <style
+    type="text/css">[uib-tooltip-popup].tooltip.top-left > .tooltip-arrow, [uib-tooltip-popup].tooltip.top-right > .tooltip-arrow, [uib-tooltip-popup].tooltip.bottom-left > .tooltip-arrow, [uib-tooltip-popup].tooltip.bottom-right > .tooltip-arrow, [uib-tooltip-popup].tooltip.left-top > .tooltip-arrow, [uib-tooltip-popup].tooltip.left-bottom > .tooltip-arrow, [uib-tooltip-popup].tooltip.right-top > .tooltip-arrow, [uib-tooltip-popup].tooltip.right-bottom > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.top-left > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.top-right > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.bottom-left > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.bottom-right > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.left-top > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.left-bottom > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.right-top > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.right-bottom > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.top-left > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.top-right > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.bottom-left > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.bottom-right > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.left-top > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.left-bottom > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.right-top > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.right-bottom > .tooltip-arrow, [uib-popover-popup].popover.top-left > .arrow, [uib-popover-popup].popover.top-right > .arrow, [uib-popover-popup].popover.bottom-left > .arrow, [uib-popover-popup].popover.bottom-right > .arrow, [uib-popover-popup].popover.left-top > .arrow, [uib-popover-popup].popover.left-bottom > .arrow, [uib-popover-popup].popover.right-top > .arrow, [uib-popover-popup].popover.right-bottom > .arrow, [uib-popover-html-popup].popover.top-left > .arrow, [uib-popover-html-popup].popover.top-right > .arrow, [uib-popover-html-popup].popover.bottom-left > .arrow, [uib-popover-html-popup].popover.bottom-right > .arrow, [uib-popover-html-popup].popover.left-top > .arrow, [uib-popover-html-popup].popover.left-bottom > .arrow, [uib-popover-html-popup].popover.right-top > .arrow, [uib-popover-html-popup].popover.right-bottom > .arrow, [uib-popover-template-popup].popover.top-left > .arrow, [uib-popover-template-popup].popover.top-right > .arrow, [uib-popover-template-popup].popover.bottom-left > .arrow, [uib-popover-template-popup].popover.bottom-right > .arrow, [uib-popover-template-popup].popover.left-top > .arrow, [uib-popover-template-popup].popover.left-bottom > .arrow, [uib-popover-template-popup].popover.right-top > .arrow, [uib-popover-template-popup].popover.right-bottom > .arrow {
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    margin: 0;
+  }
+
+  [uib-popover-popup].popover, [uib-popover-html-popup].popover, [uib-popover-template-popup].popover {
+    display: block !important;
+  }</style>
+  <style type="text/css">.uib-datepicker-popup.dropdown-menu {
+    display: block;
+    float: none;
+    margin: 0;
+  }
+
+  .uib-button-bar {
+    padding: 10px 9px 2px;
+  }</style>
+  <style type="text/css">.uib-position-measure {
+    display: block !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+  }
+
+  .uib-position-scrollbar-measure {
+    position: absolute !important;
+    top: -9999px !important;
+    width: 50px !important;
+    height: 50px !important;
+    overflow: scroll !important;
+  }
+
+  .uib-position-body-scrollbar-measure {
+    overflow: scroll !important;
+  }</style>
+  <style type="text/css">.uib-datepicker .uib-title {
+    width: 100%;
+  }
+
+  .uib-day button, .uib-month button, .uib-year button {
+    min-width: 100%;
+  }
+
+  .uib-left, .uib-right {
+    width: 100%
+  }</style>
+  <style type="text/css">.ng-animate.item:not(.left):not(.right) {
+    -webkit-transition: 0s ease-in-out left;
+    transition: 0s ease-in-out left
+  }</style>
+  <style>@charset "UTF-8";
+  [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide:not(.ng-hide-animate) {
+    display: none !important;
+  }
+
+  ng\:form {
+    display: block;
+  }
+
+  .ng-animate-shim {
+    visibility: hidden;
+  }
+
+  .ng-anchor {
+    position: absolute;
+  }</style>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>The Great Lumberghini</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- styles -->
+  <link href="/app/admin/styles/styles.css?bust=7.15.0" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/app/admin/styles/user-styles.css?bust=7.15.0">
+
+  <!-- favicon -->
+  <link rel="shortcut icon" href="/app/admin/assets/images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/api/admin/plugin/adminPlugins/static/app/plugin.css">
 </head>
-<body>
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <h1>Lumberghini</h1>
-        <h2>Provide your name and let the journey begin...</h2>
-      </div>
+<body ng-controller="camAdminAppCtrl" ng-class="{'no-breadcrumbs': !$root.showBreadcrumbs}"
+      class="ng-scope no-breadcrumbs">
+<!-- navigation -->
+<div cam-widget-header="" authentication="authentication" user-name="userFullName" current-app="admin"
+     class="ng-isolate-scope">
+  <div class="navbar-header">
+    <div class="small-screen-warning">
+            <span class="glyphicon glyphicon-exclamation-sign" uib-tooltip="This application is conceived for larger screens." tooltip-placement="bottom"></span>
     </div>
-    <div class="row">
-      <div class="col">
-        <form action="/public/create-user" method="post">
-          <div class="mb-3">
-            <label class="form-label" for="userId">User Id:*</label>
-            <input class="form-control" id="userId" name="userId" type="text" required placeholder="User id" />
+  </div>
+
+  <nav class="cam-nav app-menu">
+    <ul ng-class="{collapse: !navbarOpen}" class="collapse">
+      <li class="app-switch dropdown ng-scope" ng-if="showAppDropDown" uib-dropdown="">
+        <a href="" class="dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
+          <span class="glyphicon glyphicon-home"></span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div ng-transclude="" class="sections-menu collapse" ng-class="{collapse: !navbarOpen}">
+    <!-- camIfLoggedIn: -->
+  </div>
+</div>
+
+<!-- content -->
+<div class="ctn-main">
+  <div class="ctn-wrapper">
+    <!-- ngIf: showBreadcrumbs -->
+
+    <div notifications-panel="" class="page-notifications ng-isolate-scope">
+      <div class="notifications">  <!-- ngRepeat: notification in notifications --></div>
+    </div>
+
+    <!-- view body provided by ngView -->
+    <!-- ngView: -->
+    <div ng-view="" class="ng-scope"><!-- # CE - camunda-commons-ui/lib/auth/page/login.html -->
+      <div class="form-signin-container ng-scope">
+        <form class="form-signin">
+
+          <div class="login-header">
+            <div class="login-logo ng-binding" ng-bind-html="logo">
+              <img src="holunda.png" width="300" alt="holunda">
+            </div>
+
+            <div class="app-name ng-binding">
+              The Great Lumberghini
+            </div>
           </div>
-          <div class="mb-3">
-            <label class="form-label" for="firstName">First name:</label>
-            <input class="form-control" id="firstName" name="firstName" type="text" placeholder="Please provide your first name" />
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="lastName">Last name:</label>
-            <input class="form-control" id="lastName" name="lastName" type="text" placeholder="Please provide your last name" />
-          </div>
-          <div class="mb-3">
-            <input class="btn btn-default" type="reset" name="reset" value="Reset" />
-            <input class="btn btn-primary" type="submit" name="continue" value="Continue" />
+
+          <div class="row">
+            <div class="col">
+              <form action="/public/create-user" method="post">
+                <div class="mb-3">
+                  <label class="form-label" for="userNameInput">Enter your Name:*</label>
+                  <input class="form-control" id="userNameInput" name="userNameInput" type="text" required placeholder="Your name"/>
+                </div>
+                <div class="mb-3">
+                  <input class="btn btn-primary" type="submit" name="continue" value="Continue"/>
+                </div>
+              </form>
+            </div>
           </div>
         </form>
       </div>
     </div>
   </div>
+</div>
+
+<footer cam-widget-footer="" version="v7.15.0" class="ng-isolate-scope">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-6 ng-binding" style="text-align: left;">
+        Date and Time displayed in local timezone: <i class="ng-binding">Europe/Berlin</i>
+      </div>
+      <div class="col-xs-6 ng-binding">
+        Powered by <a href="http://camunda.org">Camunda Platform</a> /
+        <span class="version ng-binding">v7.15.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
 </body>
 </html>

@@ -14,26 +14,28 @@ import javax.servlet.http.HttpSession
 import javax.validation.Valid
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
+import javax.validation.constraints.Pattern
 
 @Controller
 @RequestMapping("/public")
 class UserCreationAndLoginServlet(
   private val identityService: IdentityService,
   private val worstDayProcessService: WorstDayProcessService
-  ) {
+) {
   companion object : KLogging()
 
   private val authenticationService = AuthenticationService()
 
   @PostMapping(value = ["/create-user"], consumes = ["application/x-www-form-urlencoded;charset=UTF-8"])
-  fun createAndLogin(@ModelAttribute newUserModel: @Valid NewUserModel, session: HttpSession): ModelAndView {
-    val userId = newUserModel.userId!!.trim { it <= ' ' }
+  fun createAndLogin(@ModelAttribute newUserModel: NewUserModel, session: HttpSession): ModelAndView {
+    val userId = newUserModel.getUserId().trim { it <= ' ' }
+
     return try {
       if (identityService.createUserQuery().userId(userId).count() == 0L) {
         logger.info { "User created: '$userId'" }
         val user = identityService.newUser(userId).apply {
-          firstName = newUserModel.firstName
-          lastName = newUserModel.lastName
+          firstName = newUserModel.getFirstName()
+          lastName = newUserModel.getLastName()
         }
 
         identityService.saveUser(user)
@@ -61,8 +63,21 @@ class UserCreationAndLoginServlet(
    * Spring request model.
    */
   data class NewUserModel(
-    var userId: @NotNull @NotEmpty String? = null,
-    var lastName: String? = null,
-    var firstName: String? = null
-  )
+    @get:NotEmpty(message = "Must not be empty")
+    @get:NotNull(message = "Must not be null")
+    @get:Pattern(regexp = """[a-zA-Z\s]+""", message = "Must contain letters and whitespace only")
+    var userNameInput: String? = null
+  ) {
+    fun getUserId() = split().let { it.first + it.second }.joinToString(separator = "") { it.toLowerCase() }
+    fun getFirstName() = split().first.joinToString(separator = " ")
+    fun getLastName() = split().second
+    //var firstName : String?  get() = "11"
+
+    private fun split() : Pair<List<String>,String> = (userNameInput ?: "").trim()
+      .split("""\s+""".toRegex())
+      .map { it.toLowerCase().capitalize() }
+      .let { if (it.size == 1) it + "" else it }
+      .reversed()
+      .let { Pair(it.drop(1).reversed(), it.take(1).first() ) }
+  }
 }
