@@ -1,7 +1,8 @@
-package io.holunda.funstuff.lumberghini.task
+package io.holunda.funstuff.lumberghini.strategy
 
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess
-import java.util.concurrent.atomic.AtomicInteger
+import io.holunda.funstuff.lumberghini.task.WorstDayTask
+import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 
 /**
  * Strategy Pattern that determines which next tasks gets added to the current process.

@@ -26,6 +26,9 @@ object BpmnModelInstanceConverter {
     .map { it.toWorstDayTask() }
     .let { WorstDayTasks(it) }
 
+  /**
+   * Converts a camunda task to a lumberghini task.
+   */
   private fun Task.toWorstDayTask() = WorstDayTask(
     taskId = TaskId.from(this.id),
     name = this.name,
@@ -40,7 +43,7 @@ object BpmnModelInstanceConverter {
       .name(processName)
       .documentation(WorstDayProcess.DESCRIPTION)
       .camundaStartableInTasklist(false)
-      .camundaVersionTag("${version}")
+      .camundaVersionTag("$version")
       .startEvent(EVENT_START).name("Started in good mood").camundaAsyncBefore()
       .documentation("documentation")
       .camundaExecutionListenerExpression(

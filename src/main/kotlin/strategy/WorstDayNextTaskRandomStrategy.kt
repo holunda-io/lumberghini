@@ -1,5 +1,8 @@
-package io.holunda.funstuff.lumberghini.task
+package io.holunda.funstuff.lumberghini.strategy
 
+import io.holunda.funstuff.lumberghini.task.WorstDayTask
+import io.holunda.funstuff.lumberghini.task.WorstDayTaskRepository
+import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import org.springframework.stereotype.Component
 
 @Component

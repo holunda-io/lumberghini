@@ -2,7 +2,11 @@ package io.holunda.funstuff.lumberghini.test
 
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.processDefinitionKey
-import io.holunda.funstuff.lumberghini.task.*
+import io.holunda.funstuff.lumberghini.properties.TaskDataConfiguration
+import io.holunda.funstuff.lumberghini.strategy.FindNextTaskStrategy
+import io.holunda.funstuff.lumberghini.task.TaskId
+import io.holunda.funstuff.lumberghini.task.WorstDayTask
+import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import java.time.LocalDate
 import java.util.concurrent.atomic.AtomicInteger
 

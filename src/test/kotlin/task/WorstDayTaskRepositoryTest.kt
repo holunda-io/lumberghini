@@ -1,7 +1,7 @@
 package io.holunda.funstuff.lumberghini.task
 
 import io.holunda.funstuff.lumberghini.properties.LumberghiniConfigurationProperties
-import io.holunda.funstuff.lumberghini.task.TaskDataConfiguration.Colleague
+import io.holunda.funstuff.lumberghini.properties.TaskDataConfiguration.Colleague
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.TaskDataConfigurations
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

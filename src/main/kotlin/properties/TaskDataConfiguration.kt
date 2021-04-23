@@ -1,4 +1,4 @@
-package io.holunda.funstuff.lumberghini.task
+package io.holunda.funstuff.lumberghini.properties
 
 import org.valiktor.functions.hasSize
 import org.valiktor.validate

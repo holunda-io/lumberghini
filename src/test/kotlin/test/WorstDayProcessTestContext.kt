@@ -47,7 +47,6 @@ class WorstDayProcessTestContext(
 
   val service = WorstDayProcessService(
     runtimeService = runtimeService,
-    identityService = identityService,
     findNextTaskStrategy = countingNextTaskStrategy(),
     todaySupplier = WorstDayProcessFixtures.daySupplier,
     repository = repository

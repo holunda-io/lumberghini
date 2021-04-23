@@ -1,7 +1,7 @@
 package io.holunda.funstuff.lumberghini
 
 import io.holunda.funstuff.lumberghini.properties.LumberghiniConfigurationProperties
-import io.holunda.funstuff.lumberghini.task.TaskDataConfiguration
+import io.holunda.funstuff.lumberghini.properties.TaskDataConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

@@ -1,6 +1,8 @@
 package io.holunda.funstuff.lumberghini.task
 
 import io.holunda.funstuff.lumberghini.properties.LumberghiniConfigurationProperties
+import io.holunda.funstuff.lumberghini.properties.TaskDataConfiguration
+import io.holunda.funstuff.lumberghini.strategy.WorstDayNextTaskRandomStrategy
 import io.holunda.funstuff.lumberghini.test.WorstDayProcessFixtures.TaskDataConfigurations
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

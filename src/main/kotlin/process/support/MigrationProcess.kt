@@ -77,7 +77,7 @@ class MigrationProcess(
   }
 
   /**
-   * Adds a new User task to the current process and deployes the new instance.
+   * Adds a new User task to the current process and deploys the new instance.
    */
   @DelegateExpression
   fun deployNextProcessVersionDelegate() = JavaDelegate {

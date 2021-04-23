@@ -3,12 +3,12 @@ package io.holunda.funstuff.lumberghini.process
 import io.holunda.camunda.bpm.data.CamundaBpmData
 import io.holunda.funstuff.lumberghini.UserName
 import io.holunda.funstuff.lumberghini.camunda.CamundaExtensions.DelegateExpression
+import io.holunda.funstuff.lumberghini.camunda.CamundaExtensions.toOptional
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.VARIABLES
 import io.holunda.funstuff.lumberghini.process.WorstDayProcess.Companion.datePattern
 import io.holunda.funstuff.lumberghini.process.support.MigrationProcess.Companion.startMigrationProcess
-import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
+import io.holunda.funstuff.lumberghini.strategy.FindNextTaskStrategy
 import mu.KLogging
-import org.camunda.bpm.engine.IdentityService
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.delegate.ExecutionListener
 import org.camunda.bpm.engine.delegate.TaskListener
@@ -20,7 +20,6 @@ import java.time.LocalDate
 @Component(WorstDayProcessService.NAME)
 class WorstDayProcessService(
   private val runtimeService: RuntimeService,
-  private val identityService: IdentityService,
   private val findNextTaskStrategy: FindNextTaskStrategy,
   private val todaySupplier: () -> LocalDate = { LocalDate.now() },
   private val repository: WorstDayProcessDefinitionRepository
@@ -42,14 +41,14 @@ class WorstDayProcessService(
   }
 
   @DelegateExpression
-  fun onTaskCreate() = TaskListener {
-    with(it) {
-      val firstName = it.processEngineServices.identityService.createUserQuery().userId(VARIABLES.userName.from(it).get()).singleResult().firstName
+  fun onTaskCreate() = TaskListener { task ->
+    val userId = VARIABLES.userName.from(task).get()
+    val user = task.processEngineServices.identityService.createUserQuery().userId(userId).singleResult().toOptional()
 
-      name = name.replace("{firstName}", firstName)
+    user.map { it.firstName }.ifPresent {
+      task.name = task.name.replace("{firstName}", it)
     }
   }
-
 
   @DelegateExpression
   fun throwLumberghInterventionListener() = LumberghInterventionException.throwExceptionListener()

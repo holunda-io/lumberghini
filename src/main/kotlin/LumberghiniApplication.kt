@@ -9,7 +9,6 @@ import io.holunda.funstuff.lumberghini.camunda.filter.FilterData
 import io.holunda.funstuff.lumberghini.camunda.filter.FilterDataService
 import io.holunda.funstuff.lumberghini.camunda.login.SessionBasedAuthenticationProvider
 import io.holunda.funstuff.lumberghini.properties.LumberghiniConfigurationProperties
-import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
 import mu.KLogging
 import org.camunda.bpm.engine.impl.ProcessEngineImpl
 import org.camunda.bpm.engine.rest.security.auth.ProcessEngineAuthenticationFilter
@@ -40,11 +39,8 @@ fun main(args: Array<String>) = runApplication<LumberghiniApplication>(*args).le
 @SpringBootApplication
 @EnableProcessApplication
 @EnableConfigurationProperties(LumberghiniConfigurationProperties::class)
-class LumberghiniApplication : CommandLineRunner {
+class LumberghiniApplication {
   companion object : KLogging()
-
-  @Autowired
-  lateinit var properties: LumberghiniConfigurationProperties
 
   /**
    * AuthenticationFilter that uses activates the [SessionBasedAuthenticationProvider] to auto login users to the cockpit.
@@ -59,9 +55,9 @@ class LumberghiniApplication : CommandLineRunner {
     }
 
   @Bean
-  fun createMyTasksFilterPlugin(objectMapper: ObjectMapper) : SpringBootProcessEnginePlugin = object : SpringBootProcessEnginePlugin() {
+  fun createMyTasksFilterPlugin() : SpringBootProcessEnginePlugin = object : SpringBootProcessEnginePlugin() {
     override fun postProcessEngineBuild(processEngine: ProcessEngineImpl) {
-      val filterDataService = FilterDataService(processEngine, objectMapper)
+      val filterDataService = FilterDataService(processEngine)
       val myTasksFilter = filterDataService.create(
         FilterData(
           name = "My Tasks",
@@ -84,10 +80,6 @@ class LumberghiniApplication : CommandLineRunner {
    */
   @Bean
   fun todaySupplier(): TodaySupplier = { LocalDate.now() }
-
-  override fun run(vararg args: String) {
-    logger.info { "started with: $properties" }
-  }
 }
 
 /**
@@ -118,8 +110,6 @@ typealias DeploymentId = String
  * Camunda: key of a [org.camunda.bpm.engine.task.Task] (String).
  */
 typealias TaskDefinitionKey = String
-
-typealias BusinessKey = Pair<UserName, LocalDate>
 
 
 /**

@@ -1,6 +1,5 @@
 package io.holunda.funstuff.lumberghini.camunda.filter
 
-//10847f1c-a45b-11eb-98d2-7e77227b1520	1	Task	My Tasks	null	{"taskAssigneeExpression":"${ currentUser() }"}	{"description":"all I have to do","priority":0,"color":"#ef0606","refresh":false,"showUndefinedVariable":false}
 
 data class FilterData(
   val name: String,

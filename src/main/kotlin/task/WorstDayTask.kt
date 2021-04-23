@@ -1,5 +1,6 @@
 package io.holunda.funstuff.lumberghini.task
 
+import io.holunda.funstuff.lumberghini.properties.TaskDataConfiguration
 
 /**
  * A user task in the process, defined by id, name and description.

@@ -3,7 +3,7 @@ package io.holunda.funstuff.lumberghini.task
 import io.holunda.funstuff.lumberghini.TaskDefinitionKey
 
 /**
- * Wrapper class that creates a [TaskDefinitionKey] using the id (index of task in [TaskDataConfiguration]
+ * Wrapper class that creates a [TaskDefinitionKey] using the id (index of task in [io.holunda.funstuff.lumberghini.properties.TaskDataConfiguration]
  * and the count (usage of the same task configuration in this process so far).
  *
  * The result is a taskDefinitionKey which is unique for the current process instance.
@@ -14,6 +14,7 @@ data class TaskId(val prefix: String = "task", val id: Int, val count: Int = 0) 
       TaskId(it[0], it[1].toInt(), it[2].toInt())
     }
 
+    // format an int with trailing zeros
     private fun Int.padStart(length: Int = 3, char: Char = '0') = toString().padStart(length, char)
   }
 
