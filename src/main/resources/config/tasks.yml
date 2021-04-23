@@ -3,7 +3,7 @@ lumberghini.tasks:
     description: "I need my stapler."
     colleague: Milton
 
-  - name: "Hello %s what's happening."
+  - name: "Hello {firstName} what's happening."
     description: "I'm gonna need you to go ahead and come in tomorrow. So if you could be here at around....9 that'd be great."
     colleague: Bill
 

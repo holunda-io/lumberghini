@@ -41,6 +41,15 @@ class WorstDayProcessService(
     }
   }
 
+  @DelegateExpression
+  fun onTaskCreate() = TaskListener {
+    with(it) {
+      val firstName = it.processEngineServices.identityService.createUserQuery().userId(VARIABLES.userName.from(it).get()).singleResult().firstName
+
+      name = name.replace("{firstName}", firstName)
+    }
+  }
+
 
   @DelegateExpression
   fun throwLumberghInterventionListener() = LumberghInterventionException.throwExceptionListener()

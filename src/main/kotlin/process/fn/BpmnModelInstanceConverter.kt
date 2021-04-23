@@ -7,6 +7,7 @@ import io.holunda.funstuff.lumberghini.task.TaskId
 import io.holunda.funstuff.lumberghini.task.WorstDayTask
 import io.holunda.funstuff.lumberghini.task.WorstDayTasks
 import org.camunda.bpm.engine.delegate.ExecutionListener
+import org.camunda.bpm.engine.delegate.TaskListener
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
 import org.camunda.bpm.model.bpmn.instance.FlowNode
@@ -55,10 +56,12 @@ object BpmnModelInstanceConverter {
             .name(task.name)
             .documentation(task.description)
             .camundaAssignee(process.userId)
+            .camundaTaskListenerDelegateExpression(TaskListener.EVENTNAME_CREATE, "#{worstDayProcessService.onTaskCreate()}")
           // update the lastUserTask id for the next iteration
           lastElementId = task.taskDefinitionKey
         }
 
+        // jump to last task
         getModelElementById<UserTask>(lastElementId).builder()
           .camundaAsyncAfter()
           .camundaExecutionListenerDelegateExpression(ExecutionListener.EVENTNAME_END, "#{worstDayProcessService.startMigrationListener()}")
