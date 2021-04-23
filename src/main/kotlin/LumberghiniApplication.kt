@@ -5,12 +5,16 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.holunda.funstuff.lumberghini.JacksonDataFormatConfigurator.Companion.configure
+import io.holunda.funstuff.lumberghini.camunda.filter.FilterData
+import io.holunda.funstuff.lumberghini.camunda.filter.FilterDataService
 import io.holunda.funstuff.lumberghini.camunda.login.SessionBasedAuthenticationProvider
 import io.holunda.funstuff.lumberghini.properties.LumberghiniConfigurationProperties
 import io.holunda.funstuff.lumberghini.task.FindNextTaskStrategy
 import mu.KLogging
+import org.camunda.bpm.engine.impl.ProcessEngineImpl
 import org.camunda.bpm.engine.rest.security.auth.ProcessEngineAuthenticationFilter
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
+import org.camunda.bpm.spring.boot.starter.util.SpringBootProcessEnginePlugin
 import org.camunda.bpm.webapp.impl.security.auth.ContainerBasedAuthenticationFilter
 import org.camunda.spin.impl.json.jackson.format.JacksonJsonDataFormat
 import org.camunda.spin.spi.DataFormatConfigurator
@@ -54,6 +58,23 @@ class LumberghiniApplication : CommandLineRunner {
       setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST))
     }
 
+  @Bean
+  fun createMyTasksFilterPlugin(objectMapper: ObjectMapper) : SpringBootProcessEnginePlugin = object : SpringBootProcessEnginePlugin() {
+    override fun postProcessEngineBuild(processEngine: ProcessEngineImpl) {
+      val filterDataService = FilterDataService(processEngine, objectMapper)
+      val myTasksFilter = filterDataService.create(
+        FilterData(
+          name = "My Tasks",
+          description = "all I have to do today",
+          priority = 100,
+          color = "#c31d1d",
+          taskAssigneeExpression = "\${ currentUser() }",
+          refresh = true
+        )
+      )
+      logger.info { "Created Task Filter: $myTasksFilter" }
+    }
+  }
 
   @Bean
   fun objectMapper() = jacksonObjectMapper().configure()

@@ -3,7 +3,7 @@ spring:
     url: "jdbc:h2:mem:${spring.application.name};DB_CLOSE_DELAY=-1"
     driverClassName: org.h2.Driver
     username: "sa"
-    password: "sa"
+    password: ""
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     generate-ddl: false

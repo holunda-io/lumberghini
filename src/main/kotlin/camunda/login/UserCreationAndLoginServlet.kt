@@ -2,15 +2,18 @@ package io.holunda.funstuff.lumberghini.camunda.login
 
 import io.holunda.funstuff.lumberghini.process.WorstDayProcessService
 import mu.KLogging
+import org.camunda.bpm.engine.FilterService
 import org.camunda.bpm.engine.IdentityService
 import org.camunda.bpm.webapp.impl.security.auth.AuthenticationService
 import org.camunda.bpm.webapp.impl.security.auth.Authentications
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 import javax.servlet.http.HttpSession
+import javax.validation.Valid
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
@@ -19,6 +22,7 @@ import javax.validation.constraints.Pattern
 @RequestMapping("/public")
 class UserCreationAndLoginServlet(
   private val identityService: IdentityService,
+  private val filterService: FilterService,
   private val worstDayProcessService: WorstDayProcessService
 ) {
   companion object : KLogging()
@@ -26,7 +30,12 @@ class UserCreationAndLoginServlet(
   private val authenticationService = AuthenticationService()
 
   @PostMapping(value = ["/create-user"], consumes = ["application/x-www-form-urlencoded;charset=UTF-8"])
-  fun createAndLogin(@ModelAttribute newUserModel: NewUserModel, session: HttpSession): ModelAndView {
+  fun createAndLogin(
+    @ModelAttribute
+    @Valid
+    newUserModel: NewUserModel,
+    session: HttpSession
+  ): ModelAndView {
     val userInfo = NewUserInfo(newUserModel)
     logger.info { "==========    logging in new user: $userInfo" }
 
@@ -50,9 +59,13 @@ class UserCreationAndLoginServlet(
 
       worstDayProcessService.start(userInfo.id)
 
+      val filterId = filterService.createTaskFilterQuery().filterName("My Tasks").singleResult().id
+      val taskListPath =
+        "/app/tasklist/default/#/?searchQuery=%5B%5D&filter=$filterId&sorting=%5B%7B%22sortBy%22:%22created%22,%22sortOrder%22:%22desc%22%7D%5D"
+
       logger.info("User '${userInfo.id}' is now logged in.")
       // redirect to welcome
-      ModelAndView("redirect:/app/tasklist/default/")
+      ModelAndView("redirect:$taskListPath")
     } catch (e: Exception) {
       logger.error("Error logging you in", e)
       ModelAndView("/index.html")
