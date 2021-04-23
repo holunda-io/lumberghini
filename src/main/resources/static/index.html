@@ -57,26 +57,7 @@
   .uib-left, .uib-right {
     width: 100%
   }</style>
-  <style type="text/css">.ng-animate.item:not(.left):not(.right) {
-    -webkit-transition: 0s ease-in-out left;
-    transition: 0s ease-in-out left
-  }</style>
-  <style>@charset "UTF-8";
-  [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide:not(.ng-hide-animate) {
-    display: none !important;
-  }
 
-  ng\:form {
-    display: block;
-  }
-
-  .ng-animate-shim {
-    visibility: hidden;
-  }
-
-  .ng-anchor {
-    position: absolute;
-  }</style>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
   <title>The Great Lumberghini</title>
@@ -92,30 +73,22 @@
   <link rel="shortcut icon" href="/app/admin/assets/images/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/api/admin/plugin/adminPlugins/static/app/plugin.css">
 </head>
-<body ng-controller="camAdminAppCtrl" ng-class="{'no-breadcrumbs': !$root.showBreadcrumbs}"
-      class="ng-scope no-breadcrumbs">
+<body class="no-breadcrumbs">
 <!-- navigation -->
 <div cam-widget-header="" authentication="authentication" user-name="userFullName" current-app="admin"
      class="ng-isolate-scope">
+
   <div class="navbar-header">
     <div class="small-screen-warning">
-            <span class="glyphicon glyphicon-exclamation-sign" uib-tooltip="This application is conceived for larger screens." tooltip-placement="bottom"></span>
+      <span class="glyphicon glyphicon-exclamation-sign" uib-tooltip="This application is conceived for larger screens." tooltip-placement="bottom"></span>
     </div>
   </div>
 
   <nav class="cam-nav app-menu">
-    <ul ng-class="{collapse: !navbarOpen}" class="collapse">
-      <li class="app-switch dropdown ng-scope" ng-if="showAppDropDown" uib-dropdown="">
-        <a href="" class="dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
-          <span class="glyphicon glyphicon-home"></span>
-        </a>
-      </li>
+    <ul class="collapse">
+      <li class="app-switch dropdown"><span class="glyphicon glyphicon-home"></span></li>
     </ul>
   </nav>
-
-  <div ng-transclude="" class="sections-menu collapse" ng-class="{collapse: !navbarOpen}">
-    <!-- camIfLoggedIn: -->
-  </div>
 </div>
 
 <!-- content -->
@@ -123,37 +96,36 @@
   <div class="ctn-wrapper">
     <!-- ngIf: showBreadcrumbs -->
 
-    <div notifications-panel="" class="page-notifications ng-isolate-scope">
+    <div notifications-panel="" class="page-notifications">
       <div class="notifications">  <!-- ngRepeat: notification in notifications --></div>
     </div>
 
     <!-- view body provided by ngView -->
     <!-- ngView: -->
-    <div ng-view="" class="ng-scope"><!-- # CE - camunda-commons-ui/lib/auth/page/login.html -->
-      <div class="form-signin-container ng-scope">
-        <form class="form-signin">
+    <div>
+      <div class="form-signin-container">
+        <form action="/public/create-user" method="post" class="form-signin">
 
           <div class="login-header">
-            <div class="login-logo ng-binding" ng-bind-html="logo">
+            <div class="login-logo">
               <img src="holunda.png" width="300" alt="holunda">
             </div>
 
-            <div class="app-name ng-binding">
+            <div class="app-name">
               The Great Lumberghini
             </div>
           </div>
 
           <div class="row">
             <div class="col">
-              <form action="/public/create-user" method="post">
-                <div class="mb-3">
-                  <label class="form-label" for="userNameInput">Enter your Name:*</label>
-                  <input class="form-control" id="userNameInput" name="userNameInput" type="text" required placeholder="Your name"/>
-                </div>
-                <div class="mb-3">
-                  <input class="btn btn-primary" type="submit" name="continue" value="Continue"/>
-                </div>
-              </form>
+
+              <div class="mb-3">
+                <label class="form-label" for="userNameInput">Enter your Name:*</label>
+                <input class="form-control" id="userNameInput" name="userNameInput" type="text" required placeholder="Your name"/>
+              </div>
+              <div class="mb-3">
+                <input class="btn btn-primary" type="submit" name="continue" value="Continue"/>
+              </div>
             </div>
           </div>
         </form>
@@ -162,15 +134,15 @@
   </div>
 </div>
 
-<footer cam-widget-footer="" version="v7.15.0" class="ng-isolate-scope">
+<footer cam-widget-footer="" version="v7.15.0">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-xs-6 ng-binding" style="text-align: left;">
-        Date and Time displayed in local timezone: <i class="ng-binding">Europe/Berlin</i>
+      <div class="col-xs-6" style="text-align: left;">
+        Date and Time displayed in local timezone: <i>Europe/Berlin</i>
       </div>
-      <div class="col-xs-6 ng-binding">
-        Powered by <a href="http://camunda.org">Camunda Platform</a> /
-        <span class="version ng-binding">v7.15.0</span>
+      <div class="col-xs-6">
+        Made with <span class="glyphicon glyphicon-heart"></span> by <a href="https://holisticon.de">Holisticon</a> /
+        <span class="version">Camunda v7.15.0</span>
       </div>
     </div>
   </div>

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 import javax.servlet.http.HttpSession
-import javax.validation.Valid
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
@@ -28,14 +27,15 @@ class UserCreationAndLoginServlet(
 
   @PostMapping(value = ["/create-user"], consumes = ["application/x-www-form-urlencoded;charset=UTF-8"])
   fun createAndLogin(@ModelAttribute newUserModel: NewUserModel, session: HttpSession): ModelAndView {
-    val userId = newUserModel.getUserId().trim { it <= ' ' }
+    val userInfo = NewUserInfo(newUserModel)
+    logger.info { "==========    logging in new user: $userInfo" }
 
     return try {
-      if (identityService.createUserQuery().userId(userId).count() == 0L) {
-        logger.info { "User created: '$userId'" }
-        val user = identityService.newUser(userId).apply {
-          firstName = newUserModel.getFirstName()
-          lastName = newUserModel.getLastName()
+      if (identityService.createUserQuery().userId(userInfo.id).count() == 0L) {
+        logger.info { "User created: '${userInfo.id}'" }
+        val user = identityService.newUser(userInfo.id).apply {
+          firstName = userInfo.firstName
+          lastName = userInfo.lastName
         }
 
         identityService.saveUser(user)
@@ -44,13 +44,13 @@ class UserCreationAndLoginServlet(
 
       Authentications.clearCurrent()
       Authentications().apply {
-        addAuthentication(authenticationService.createAuthenticate("default", userId))
+        addAuthentication(authenticationService.createAuthenticate("default", userInfo.id))
         Authentications.updateSession(session, this)
       }
 
-      worstDayProcessService.start(userId)
+      worstDayProcessService.start(userInfo.id)
 
-      logger.info("User '$userId' is now logged in.")
+      logger.info("User '${userInfo.id}' is now logged in.")
       // redirect to welcome
       ModelAndView("redirect:/app/tasklist/default/")
     } catch (e: Exception) {
@@ -59,25 +59,33 @@ class UserCreationAndLoginServlet(
     }
   }
 
+  data class NewUserInfo(val id: String, val firstName: String, val lastName: String) {
+    companion object {
+      operator fun invoke(model: NewUserModel): NewUserInfo {
+        val parts: Pair<List<String>, String> = requireNotNull(model.userNameInput).trim()
+          .split("""\s+""".toRegex())
+          .map { it.toLowerCase().capitalize() }
+          .let { if (it.size == 1) it + "" else it }
+          .reversed()
+          .let { Pair(it.drop(1).reversed(), it.take(1).first()) }
+
+        return NewUserInfo(
+          id = parts.let { it.first + it.second }.joinToString(separator = "") { it.toLowerCase() },
+          firstName = parts.first.joinToString(separator = " "),
+          lastName = parts.second
+        )
+      }
+    }
+  }
+
   /**
-   * Spring request model.
+   * Spring request model. Just used for POST method call, transformed to
+   * [NewUserInfo] for user creation.
    */
   data class NewUserModel(
     @get:NotEmpty(message = "Must not be empty")
     @get:NotNull(message = "Must not be null")
     @get:Pattern(regexp = """[a-zA-Z\s]+""", message = "Must contain letters and whitespace only")
     var userNameInput: String? = null
-  ) {
-    fun getUserId() = split().let { it.first + it.second }.joinToString(separator = "") { it.toLowerCase() }
-    fun getFirstName() = split().first.joinToString(separator = " ")
-    fun getLastName() = split().second
-    //var firstName : String?  get() = "11"
-
-    private fun split() : Pair<List<String>,String> = (userNameInput ?: "").trim()
-      .split("""\s+""".toRegex())
-      .map { it.toLowerCase().capitalize() }
-      .let { if (it.size == 1) it + "" else it }
-      .reversed()
-      .let { Pair(it.drop(1).reversed(), it.take(1).first() ) }
-  }
+  )
 }
