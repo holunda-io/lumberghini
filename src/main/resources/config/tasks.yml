@@ -1,3 +1,4 @@
+# https://www.rottentomatoes.com/m/office_space/quotes/
 lumberghini.tasks:
   - name: "Please give me my stapler"
     description: "I need my stapler."
@@ -30,10 +31,6 @@ lumberghini.tasks:
   - name: "Excuse me, but I think you have my stapler."
     description: "-"
     colleague: Milton
-
-  - name: "PC Load Letter"
-    description: "What the fuck does that mean?"
-    colleague: Michael
 
   - name: "I'm also gonna need you to go ahead and come in on Sunday."
     description: "Yeah........ I'm gonna need you to come in on Saturday."

@@ -18,6 +18,6 @@ from my local `.m2/settings.xml`. So the call of the azure maven plugin has to i
 * wait
 * check <https://lumberghini-app.azurewebsites.net>
 
-https://www.youtube.com/watch?v=jsLUidiYm0w
+
 
 
