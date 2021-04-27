@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>io.holunda.funstuff</groupId>
-	<artifactId>lumberghini</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+  <groupId>io.holunda.funstuff</groupId>
+  <artifactId>lumberghini</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
 
-	<properties>
+  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>11</java.version>
-		<kotlin.version>1.5.0</kotlin.version>
-		<spring-boot.version>2.4.5</spring-boot.version>
-		<camunda.version>7.15.0</camunda.version>
-		<camunda-data.version>1.2.2</camunda-data.version>
-	</properties>
+    <java.version>11</java.version>
+    <kotlin.version>1.5.0</kotlin.version>
+    <spring-boot.version>2.4.5</spring-boot.version>
+    <camunda.version>7.15.0</camunda.version>
+    <camunda-data.version>1.2.2</camunda-data.version>
+  </properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-bom</artifactId>
-				<version>${kotlin.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.camunda.bpm</groupId>
-				<artifactId>camunda-bom</artifactId>
-				<version>${camunda.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-bom</artifactId>
+        <version>${kotlin.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.camunda.bpm</groupId>
+        <artifactId>camunda-bom</artifactId>
+        <version>${camunda.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-	<dependencies>
+  <dependencies>
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
@@ -61,7 +61,7 @@
       <version>${camunda-data.version}</version>
     </dependency>
 
-		<dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
     </dependency>
@@ -76,13 +76,13 @@
     </dependency>
 
     <dependency>
-			<groupId>org.jetbrains.kotlin</groupId>
-			<artifactId>kotlin-reflect</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jetbrains.kotlin</groupId>
-			<artifactId>kotlin-stdlib-jdk8</artifactId>
-		</dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-reflect</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-jdk8</artifactId>
+    </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
@@ -100,39 +100,39 @@
     </dependency>
 
     <dependency>
-			<groupId>io.github.microutils</groupId>
-			<artifactId>kotlin-logging-jvm</artifactId>
-			<version>2.0.6</version>
-		</dependency>
+      <groupId>io.github.microutils</groupId>
+      <artifactId>kotlin-logging-jvm</artifactId>
+      <version>2.0.6</version>
+    </dependency>
     <dependency>
       <groupId>org.valiktor</groupId>
       <artifactId>valiktor-core</artifactId>
       <version>0.12.0</version>
     </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.camunda.bpm.extension</groupId>
       <artifactId>camunda-bpm-junit5</artifactId>
       <version>1.0.0</version>
       <scope>test</scope>
     </dependency>
-		<dependency>
-			<groupId>org.camunda.bpm.assert</groupId>
-			<artifactId>camunda-bpm-assert</artifactId>
-			<version>10.0.0</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.camunda.bpm.assert</groupId>
+      <artifactId>camunda-bpm-assert</artifactId>
+      <version>10.0.0</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.camunda.bpm.extension.mockito</groupId>
       <artifactId>camunda-bpm-mockito</artifactId>
@@ -147,17 +147,17 @@
     </dependency>
   </dependencies>
 
-	<build>
+  <build>
     <defaultGoal>clean package</defaultGoal>
     <finalName>lumberghini</finalName>
 
     <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot.version}</version>
+    <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot.version}</version>
         <executions>
           <execution>
             <goals>
@@ -168,47 +168,47 @@
         <configuration>
           <mainClass>io.holunda.funstuff.lumberghini.LumberghiniApplicationKt</mainClass>
         </configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-maven-plugin</artifactId>
-				<version>${kotlin.version}</version>
-				<executions>
-					<execution>
-						<id>compile</id>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
+      </plugin>
+      <plugin>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${kotlin.version}</version>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
 
-					<execution>
-						<id>test-compile</id>
-						<goals>
-							<goal>test-compile</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<jvmTarget>${java.version}</jvmTarget>
-					<compilerPlugins>
-						<plugin>spring</plugin>
-					</compilerPlugins>
-					<args>
-						<arg>-Xjsr305=strict</arg>
+          <execution>
+            <id>test-compile</id>
+            <goals>
+              <goal>test-compile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <jvmTarget>${java.version}</jvmTarget>
+          <compilerPlugins>
+            <plugin>spring</plugin>
+          </compilerPlugins>
+          <args>
+            <arg>-Xjsr305=strict</arg>
             <arg>-Xjvm-default=enable</arg>
-					</args>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.jetbrains.kotlin</groupId>
-						<artifactId>kotlin-maven-allopen</artifactId>
-						<version>${kotlin.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
+          </args>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-allopen</artifactId>
+            <version>${kotlin.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
 
     </plugins>
-	</build>
+  </build>
 
   <profiles>
     <profile>
