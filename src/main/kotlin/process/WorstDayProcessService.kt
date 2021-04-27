@@ -47,6 +47,7 @@ class WorstDayProcessService(
 
     user.map { it.firstName }.ifPresent {
       task.name = task.name.replace("{firstName}", it)
+      task.description = task.description.replace("{firstName}", it)
     }
   }
 

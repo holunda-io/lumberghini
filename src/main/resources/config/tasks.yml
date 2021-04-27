@@ -21,7 +21,7 @@ lumberghini.tasks:
     colleague: Bill
 
   - name: "Listen, are you gonna have those TPS reports for us this afternoon?"
-    description: "Hello Peter, what's happening? Listen, are you gonna have those TPS reports for us this afternoon?"
+    description: "Hello {firstName}, what's happening? Listen, are you gonna have those TPS reports for us this afternoon?"
     colleague: Bill
 
   - name: "Ah. Well then I suppose we should go ahead and have a little talk."
