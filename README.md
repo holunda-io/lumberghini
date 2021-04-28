@@ -21,3 +21,8 @@ from my local `.m2/settings.xml`. So the call of the azure maven plugin has to i
 * check <https://lumberghini-app.azurewebsites.net>
 
 Configuration: <https://portal.azure.com>
+
+
+
+https://user-images.githubusercontent.com/814032/116476200-2deeca80-a87b-11eb-9447-5248b07f7c4a.mp4
+
