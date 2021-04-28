@@ -2,6 +2,8 @@
 
 A camunda perpetuum mobile based on the movie "office space".
 
+[![Slideshare](./talk.png)](https://www.slideshare.net/jangalinski/camunda-summit2021-the-great-lumberghini)
+
 ## Information
 
 * [Issues](https://github.com/jangalinski/lumberghini/issues)
@@ -18,6 +20,4 @@ from my local `.m2/settings.xml`. So the call of the azure maven plugin has to i
 * wait
 * check <https://lumberghini-app.azurewebsites.net>
 
-
-
-
+Configuration: <https://portal.azure.com>

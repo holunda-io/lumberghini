@@ -19,9 +19,9 @@ class WorstDayNextTaskRandomStrategy(
 ) : FindNextTaskStrategy {
 
   /**
-   * The first task is elected randomly.
+   * The first task is selected randomly.
    */
-  override fun first(): WorstDayTask = random(repository.findAll())
+  override fun first(): WorstDayTask = repository.findAll().let(random)
 
   /**
    * Follow up tasks are selected based on previous tasks.
