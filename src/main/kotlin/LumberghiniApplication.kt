@@ -17,8 +17,6 @@ import org.camunda.bpm.spring.boot.starter.util.SpringBootProcessEnginePlugin
 import org.camunda.bpm.webapp.impl.security.auth.ContainerBasedAuthenticationFilter
 import org.camunda.spin.impl.json.jackson.format.JacksonJsonDataFormat
 import org.camunda.spin.spi.DataFormatConfigurator
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
