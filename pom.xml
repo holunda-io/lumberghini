@@ -10,7 +10,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>11</java.version>
-    <kotlin.version>1.6.10</kotlin.version>
+    <kotlin.version>1.6.20</kotlin.version>
     <spring-boot.version>2.5.8</spring-boot.version>
     <camunda.version>7.16.0</camunda.version>
     <camunda-data.version>1.2.4</camunda-data.version>
