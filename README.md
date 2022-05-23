@@ -1,5 +1,7 @@
 # lumberghini
 
+[![example](https://img.shields.io/badge/lifecycle-EXAMPLE-blue.svg)](https://github.com/holisticon#open-source-lifecycle)
+
 A camunda perpetuum mobile based on the movie "office space".
 
 [![Slideshare](./talk.png)](https://www.slideshare.net/jangalinski/camunda-summit2021-the-great-lumberghini)
